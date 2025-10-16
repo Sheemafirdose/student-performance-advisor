@@ -36,6 +36,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+             position: relative; /* ADD THIS LINE */
         }
 
         .main-container {
@@ -383,10 +384,95 @@
                 flex-direction: column;
             }
         }
+        /* Chatbot Icon Styles - ADD THIS TO YOUR CSS */
+.chatbot-icon {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.chatbot-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 30px rgba(67, 97, 238, 0.6);
+}
+
+.chatbot-icon i {
+    font-size: 28px;
+    color: white;
+}
+
+.chatbot-notification {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background: #ff4757;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(67, 97, 238, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0);
+    }
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-5px);
+    }
+}
+
+@media (max-width: 968px) {
+    .chatbot-icon {
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .chatbot-icon i {
+        font-size: 24px;
+    }
+}
     </style>
 </head>
 <body>
     <div class="main-container">
+        <!-- ADD THIS CHATBOT ICON RIGHT AFTER BODY TAG -->
+<!-- Chatbot Icon - Always Visible -->
+<div class="chatbot-icon" onclick="startStaticChat()">
+    <i class="fas fa-robot"></i>
+    <div class="chatbot-notification">!</div>
+</div>
         <!-- LEFT SIDE: Input Form -->
         <div class="input-section">
             <div class="form-header">
@@ -719,6 +805,24 @@
                 window.location.href = '/';
             });
         });
+        // ===== ADD THE NEW FUNCTION HERE =====
+// Function for static chatbot icon
+function startStaticChat() {
+    document.getElementById('chatModal').style.display = 'block';
+    document.getElementById('chatOverlay').style.display = 'block';
+    document.getElementById('chatMessages').innerHTML = '';
+    
+    // Check if user has submitted form data (has prediction results)
+    const hasPrediction = document.querySelector('.result-container.show') !== null;
+    
+    if (!hasPrediction) {
+        // User hasn't entered details yet
+        addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form on the left and click 'Analyze Performance' first to get your prediction results. Then I can provide personalized suggestions based on your academic data!\n\nOnce you get your performance prediction, I'll be able to give you customized study tips and improvement strategies.", 'advisor');
+    } else {
+        // User has data - start normal chat (same as Get Interactive Suggestions button)
+        startSuggestionChat();
+    }
+}
     </script>
     <script>
 let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
