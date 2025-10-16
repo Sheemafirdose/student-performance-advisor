@@ -905,7 +905,7 @@ class EnhancedChatAdvisor:
             return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"# Replace the existing chat advisor with enhanced version
 chat_advisor = EnhancedChatAdvisor()
 # ==================== YOUR EXISTING FLASK APP ====================
-app = Flask(__name__, template_folder='student_performance_dnn/templates')
+app = Flask(__name__, template_folder='templates')
 app.secret_key = 'your_secret_key_here'
 
 scaler = joblib.load("student_performance_dnn/production_model/scaler.pkl")
