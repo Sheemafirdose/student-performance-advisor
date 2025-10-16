@@ -807,6 +807,7 @@
         });
         // ===== ADD THE NEW FUNCTION HERE =====
 // Function for static chatbot icon
+// Function for static chatbot icon - UPDATED
 function startStaticChat() {
     document.getElementById('chatModal').style.display = 'block';
     document.getElementById('chatOverlay').style.display = 'block';
@@ -816,23 +817,31 @@ function startStaticChat() {
     const hasPrediction = document.querySelector('.result-container.show') !== null;
     
     if (!hasPrediction) {
-        // User hasn't entered details yet
+        // User hasn't entered details yet - DON'T START CHAT FLOW
         addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form on the left and click 'Analyze Performance' first to get your prediction results. Then I can provide personalized suggestions based on your academic data!\n\nOnce you get your performance prediction, I'll be able to give you customized study tips and improvement strategies.", 'advisor');
+        // DON'T show quick actions and DON'T proceed to name asking
     } else {
-        // User has data - start normal chat (same as Get Interactive Suggestions button)
+        // User has data - start normal chat with quick actions
         startSuggestionChat();
     }
 }
     </script>
     <script>
 let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
-
 function startSuggestionChat() {
     document.getElementById('chatModal').style.display = 'block';
     document.getElementById('chatOverlay').style.display = 'block';
     document.getElementById('chatMessages').innerHTML = '';
     
-    // Start conversation
+    // Check if user has submitted form data
+    const hasPrediction = document.querySelector('.result-container.show') !== null;
+    
+    if (!hasPrediction) {
+        addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form and get your performance prediction first. Then I can provide personalized suggestions!", 'advisor');
+        return; // STOP HERE - don't proceed to normal chat flow
+    }
+    
+    // Only continue if user has data
     fetch('/start_chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -841,7 +850,7 @@ function startSuggestionChat() {
     .then(response => response.json())
     .then(data => {
         addChatMessage(data.response, 'advisor');
-        // ALWAYS show options after first message
+        // Show quick actions only if user has data
         setTimeout(addQuickActions, 100);
     });
 }
