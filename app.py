@@ -1071,7 +1071,7 @@ def home():
             print(f"DEBUG Error: {e}")
 
     return render_template(
-        'home.html', 
+        'index.html', 
         prediction_text=prediction_text, 
         error_text=error_text,
         confidence_score=confidence_score,
