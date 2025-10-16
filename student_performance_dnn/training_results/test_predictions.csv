@@ -1,5 +1,0 @@
-Description,Expected,Predicted,Confidence,Status
-Excellent Student,Excellent,Excellent,0.99963796,CORRECT
-Good Student,Good,Excellent,0.83618057,WRONG
-Average Student,Average,Average,0.9990497,CORRECT
-Below Average Student,Below Average,Below Average,1.0,CORRECT

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, jsonify
 import numpy as np
 import pandas as pd
 import joblib
+
 from tensorflow.keras.models import load_model
 import random
 import re
@@ -904,11 +905,9 @@ class EnhancedChatAdvisor:
             return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"# Replace the existing chat advisor with enhanced version
 chat_advisor = EnhancedChatAdvisor()
 # ==================== YOUR EXISTING FLASK APP ====================
-app = Flask(__name__)
+app = Flask(__name__, template_folder='student_performance_dnn/templates')
 app.secret_key = 'your_secret_key_here'
 
-# --- Load model and scaler --- UPDATED PATHS
-# --- Load model and scaler --- FIXED PATHS (GitHub compatible)
 scaler = joblib.load("student_performance_dnn/production_model/scaler.pkl")
 dnn_model = load_model("student_performance_dnn/production_model/student_performance_model.keras")
 label_encoder = joblib.load("student_performance_dnn/production_model/label_encoder.pkl")
