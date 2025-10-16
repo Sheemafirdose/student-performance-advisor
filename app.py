@@ -810,6 +810,17 @@ class EnhancedChatAdvisor:
         conv = self.conversations[session_id]
         user_msg = user_message.strip()
         user_lower = user_msg.lower()
+        if not student_data :
+            if conv['step'] == 'greeting':
+                conv['step'] = 'blocked_no_data'  # Block further conversation
+            if conv['step'] == 'blocked_no_data':
+              return (
+            "Hello! I'm your academic advisor. 👋\n\n"
+            "Please fill out the form on the left and click 'Analyze Performance' first to get your prediction results. "
+            "Then I can provide personalized suggestions based on your academic data!\n\n"
+                "Once you get your performance prediction, I'll be able to give you customized study tips and improvement strategies."
+        )
+            
         if any(word in user_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end chat']):
             name = conv.get('name', 'Student')
             return f"Goodbye {name}! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓"
@@ -902,7 +913,9 @@ class EnhancedChatAdvisor:
                     return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
         
         else:
+ 
             return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"# Replace the existing chat advisor with enhanced version
+        
 chat_advisor = EnhancedChatAdvisor()
 # ==================== YOUR EXISTING FLASK APP ====================
 app = Flask(__name__, template_folder='student_performance_dnn/templates')

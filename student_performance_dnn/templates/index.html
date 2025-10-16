@@ -817,9 +817,17 @@ function startStaticChat() {
     const hasPrediction = document.querySelector('.result-container.show') !== null;
     
     if (!hasPrediction) {
-        // User hasn't entered details yet - DON'T START CHAT FLOW
-        addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form on the left and click 'Analyze Performance' first to get your prediction results. Then I can provide personalized suggestions based on your academic data!\n\nOnce you get your performance prediction, I'll be able to give you customized study tips and improvement strategies.", 'advisor');
-        // DON'T show quick actions and DON'T proceed to name asking
+        // User hasn't entered details yet - send empty message to trigger the backend check
+        fetch('/start_chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({session_id: currentSessionId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            addChatMessage(data.response, 'advisor');
+            // DON'T show quick actions for users without data
+        });
     } else {
         // User has data - start normal chat with quick actions
         startSuggestionChat();
