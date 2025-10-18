@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 import random
 import re
 from datetime import datetime
-
+from flask import redirect, url_for
 # ==================== STUDENT ADVISOR MODEL ====================
 class StudentAdvisorModel:
     def __init__(self):
@@ -966,6 +966,25 @@ def fix_excellent_good_confusion(predicted_class, confidence, features_dict, pro
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    # If it's a POST request (form submission), redirect to main app
+    if request.method == 'POST':
+        # Add your login validation here if needed
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # Simple validation (replace with your actual login logic)
+        if username and password:  # Add proper authentication
+            # After successful login, redirect to main app
+            return redirect('/app')
+        else:
+            return render_template('home.html', error="Invalid credentials")
+    
+    # Show login page for GET requests
+    return render_template('home.html')
+
+    
+@app.route('/app', methods=['GET', 'POST'])
+def main_app():   
     prediction_text = None
     error_text = None
     confidence_score = None
