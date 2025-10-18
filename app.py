@@ -515,17 +515,47 @@ class StudentHelpSystem:
 
 # Initialize help system
 help_system = StudentHelpSystem()
-# ==================== ENHANCED CHAT ADVISOR (FIXED FOR DATA CHECK) ====================
-# ==================== ENHANCED CHAT ADVISOR (SIMPLIFIED & FIXED) ====================
+# ==================== ENHANCED CHAT ADVISOR (FIXED) ====================
+# ==================== ENHANCED CHAT ADVISOR (WITH AUTO RESET & PERSONALIZED SUMMARY) ====================
 class EnhancedChatAdvisor:
     def __init__(self):
         self.conversations = {}
     
+    def is_out_of_scope(self, user_message):
+        """Check if user message is out of scope - ONLY for non-academic topics"""
+        user_lower = user_message.lower()
+        
+        # Academic-related keywords we can handle
+        academic_keywords = [
+            'study', 'learn', 'exam', 'test', 'cgpa', 'grade', 'attendance', 'backlog',
+            'project', 'internship', 'career', 'placement', 'programming', 'math',
+            'time', 'schedule', 'management', 'stress', 'motivation', 'confidence',
+            'technique', 'method', 'strategy', 'plan', 'improve', 'better', 'good',
+            'suggestion', 'advice', 'help', 'tip', 'how to', 'what', 'when', 'where',
+            'why', 'which', 'college', 'university', 'subject', 'course', 'lab',
+            'practical', 'theory', 'notes', 'revision', 'prepare', 'performance',
+            'analysis', 'guidance', 'placement', 'mental', 'health', 'campus', 'life',
+            'balance', 'extracurricular', 'network', 'summary', 'overview', 'details'
+        ]
+        
+        # Common greetings and basic responses (NOT out of scope)
+        basic_responses = ['hi', 'hello', 'hey', 'thanks', 'thank you', 'ok', 'yes', 'no', 'bye']
+        
+        # If it's a basic response or contains academic keywords, it's IN scope
+        if user_lower in basic_responses or any(keyword in user_lower for keyword in academic_keywords):
+            return False
+            
+        return True
+    
     def generate_personalized_summary(self, student_data, name="Student"):
         """Generate a personalized summary with user's actual data"""
+        
+        # Get analysis for personalized insights
         analysis = advisor_model.analyze_student_profile(student_data)
         
         summary = f"📊 **Academic Summary for {name}**\n\n"
+        
+        # Personal Performance Overview
         summary += "🎯 **Your Performance Overview:**\n"
         summary += f"• **CGPA**: {student_data['total_cgpa']}/10\n"
         summary += f"• **Attendance**: {student_data['attendance']}%\n"
@@ -535,43 +565,52 @@ class EnhancedChatAdvisor:
         summary += f"• **Projects/Internships**: {'Yes' if student_data['projects_internships'] else 'No'}\n"
         summary += f"• **Confidence Level**: {student_data['confidence_level']}/10\n\n"
         
+        # Strengths
         if analysis['key_strengths']:
             summary += "✅ **Your Strengths:**\n"
-            for strength in analysis['key_strengths'][:3]:
+            for strength in analysis['key_strengths'][:3]:  # Show top 3 strengths
                 summary += f"• {strength}\n"
             summary += "\n"
         
+        # Areas Needing Improvement
         if analysis['critical_areas']:
             summary += "🎯 **Focus Areas for Improvement:**\n"
-            for area in analysis['critical_areas'][:3]:
+            for area in analysis['critical_areas'][:3]:  # Show top 3 areas
                 summary += f"• {area}\n"
             summary += "\n"
         
+        # Quick Recommendations
         summary += "💡 **Quick Action Plan:**\n"
+        
+        # CGPA specific advice
         cgpa = student_data['total_cgpa']
         if cgpa < 8.0:
             summary += f"• Target CGPA: 8.0+ (Current: {cgpa}/10)\n"
         else:
             summary += f"• Maintain your excellent CGPA of {cgpa}/10\n"
         
+        # Attendance specific advice
         attendance = student_data['attendance']
         if attendance < 85:
             summary += f"• Improve attendance to 90%+ (Current: {attendance}%)\n"
         else:
             summary += f"• Great attendance at {attendance}%\n"
         
+        # Study hours specific advice
         study_hours = student_data['study_hours']
         if study_hours < 20:
             summary += f"• Increase study hours to 25+/week (Current: {study_hours} hrs)\n"
         else:
             summary += f"• Good study routine of {study_hours} hrs/week\n"
         
+        # Backlogs specific advice
         backlogs = student_data['backlogs']
         if backlogs > 0:
             summary += f"• Clear {backlogs} backlog(s) this semester\n"
         else:
             summary += "• No backlogs - excellent!\n"
         
+        # Extracurricular specific advice
         if student_data['competitions'] == 0:
             summary += "• Participate in coding competitions\n"
         if student_data['projects_internships'] == 0:
@@ -585,7 +624,8 @@ class EnhancedChatAdvisor:
     def get_category_response(self, category):
         """Get detailed responses for each main category"""
         responses = {
-            'summary': "summary",
+            'summary': "summary",  # Special case handled separately
+            
             'academic performance analysis': """
 📊 **Academic Performance Analysis & Improvement**
 
@@ -603,6 +643,7 @@ class EnhancedChatAdvisor:
 4. Regular self-assessment through mock tests
 5. Seek faculty guidance for difficult topics
 """,
+
             'study techniques time management': """
 🎯 **Study Techniques & Time Management**
 
@@ -612,11 +653,20 @@ class EnhancedChatAdvisor:
 • **Spaced Repetition**: Review at intervals (1d, 3d, 1w, 2w)
 • **Feynman Technique**: Teach concepts in simple terms
 • **Mind Mapping**: Visual organization of complex topics
+
+**Time Management Strategies:**
+• Create weekly timetable with fixed study slots
+• Use Eisenhower Matrix for task prioritization
+• Study during peak energy hours (morning/evening)
+• Eliminate distractions (phone off/silent mode)
+• Track progress with weekly reviews
 """,
+
             'exam preparation strategies': """
 📖 **Exam Preparation Strategies**
 
 **3-Phase Preparation Plan:**
+
 **Phase 1: Foundation (4-6 weeks before)**
 • Complete syllabus reading
 • Create chapter-wise notes
@@ -631,36 +681,99 @@ class EnhancedChatAdvisor:
 • Quick revision of notes
 • Formula/theorem practice
 • Time management practice
+
+**Exam Day Tips:**
+• Reach early, stay calm
+• Read all questions first
+• Attempt known questions first
+• Keep last 15min for review
+• Don't panic if stuck - move on
 """,
+
             'career guidance placements': """
 💼 **Career Guidance & Placements**
 
 **Placement Preparation Roadmap:**
-• **Technical Skills**: DSA, OOPs, DBMS, OS
-• **Practice**: LeetCode, HackerRank, CodeChef  
-• **Projects**: 2-3 good projects with GitHub portfolio
-• **Soft Skills**: Group Discussion, HR interview preparation
-• **Resume**: Build with achievements and tailor for each company
+
+**Technical Skills:**
+• Programming: DSA, OOPs, DBMS, OS
+• Practice: LeetCode, HackerRank, CodeChef
+• Projects: 2-3 good projects with GitHub portfolio
+
+**Soft Skills & Communication:**
+• Group Discussion practice
+• HR interview preparation
+• Resume building with achievements
+• Body language and confidence
+
+**Higher Studies Options:**
+• Maintain 8.0+ CGPA for good colleges
+• Research experience and publications
+• Strong recommendation letters
+• Early preparation for GATE/GRE/CAT
+
+**Internship Strategy:**
+• Apply 3-4 months in advance
+• Tailor resume for each company
+• Build LinkedIn profile and network
+• Learn from each internship experience
 """,
+
             'mental health motivation': """
 😌 **Mental Health & Motivation**
 
-**Stress Management:**
+**Stress Management Techniques:**
 • Regular exercise (30min daily)
-• 7-8 hours quality sleep  
+• 7-8 hours quality sleep
 • Healthy diet with proper hydration
 • Mindfulness meditation (10min daily)
 • Breaks and hobbies for relaxation
+
+**Staying Motivated:**
+• Set SMART goals (Specific, Measurable, Achievable, Relevant, Time-bound)
+• Break large tasks into small achievable steps
+• Reward yourself for milestones achieved
+• Find study partners for accountability
+• Visualize your long-term success
+
+**Avoiding Burnout:**
+• Take regular breaks during study
+• Maintain work-life balance
+• Don't compare with others
+• Seek help when needed
+• Remember your purpose and goals
 """,
+
             'campus life balance': """
 🌿 **Campus Life & Balance**
 
 **Extracurricular Activities:**
 • Join clubs related to your interests
-• Participate in college events
-• Take leadership roles
-• Build network with seniors and professors
-• Maintain work-life balance
+• Participate in college festivals and events
+• Take leadership roles in student bodies
+• Attend workshops and seminars
+• Build your network with seniors and professors
+
+**Networking Strategy:**
+• Connect with alumni on LinkedIn
+• Attend tech meetups and conferences
+• Participate in hackathons and competitions
+• Build relationships with faculty members
+• Create professional online presence
+
+**Work-Life Balance:**
+• Schedule fun activities weekly
+• Learn to say no when overwhelmed
+• Maintain physical health with exercise
+• Pursue hobbies and interests
+• Socialize with friends and family
+
+**Time Management:**
+• Academic time (6-8 hours daily)
+• Extracurricular (2-3 hours weekly) 
+• Personal time (1-2 hours daily)
+• Social activities (weekends)
+• Rest and relaxation (adequate sleep)
 """
         }
         return responses.get(category.lower(), "I can help you with that! Please ask more specifically.")
@@ -678,47 +791,47 @@ class EnhancedChatAdvisor:
         ]
     
     def handle_message(self, session_id, user_message, student_data=None):
-        # Initialize conversation if not exists
+        # AUTO-RESET: If student_data exists but conversation doesn't, reset conversation
+        
+        if student_data and session_id not in self.conversations:
+            self.conversations[session_id] = {
+                'step': 'greeting',
+                'name': None,
+                'awaiting_topic': False
+            }
+        
         if session_id not in self.conversations:
             self.conversations[session_id] = {
                 'step': 'greeting',
-                'name': None
+                'name': None,
+                'awaiting_topic': False
             }
         
         conv = self.conversations[session_id]
         user_msg = user_message.strip()
         user_lower = user_msg.lower()
-        
-        # ========== CRITICAL: CHECK IF USER HAS DATA ==========
-        if not student_data:
-            # NO DATA - Show message and web options
-            no_data_message = (
-                "👋 Hello! I'm your Academic Advisor.\n\n"
-                "📊 **Please enter your academic details in the form on the left and click 'Analyze Performance' first.**\n\n"
-                "After you get your performance prediction, I can provide:\n"
-                "• Personalized academic analysis\n" 
-                "• Customized study suggestions\n"
-                "• Career guidance based on your profile\n"
-                "• Improvement strategies\n\n"
-                "Once you have your prediction results, try these options:"
-            )
+        if not student_data :
+            if conv['step'] == 'greeting':
+                conv['step'] = 'blocked_no_data'  # Block further conversation
+            if conv['step'] == 'blocked_no_data':
+              return (
+            "Hello! I'm your academic advisor. 👋\n\n"
+            "Please fill out the form on the left and click 'Analyze Performance' first to get your prediction results. "
+            "Then I can provide personalized suggestions based on your academic data!\n\n"
+                "Once you get your performance prediction, I'll be able to give you customized study tips and improvement strategies."
+        )
             
-            # Show quick actions for future use
-            quick_actions = self.get_quick_actions()
-            actions_text = "\n".join([f"• {action['text']}" for action in quick_actions])
-            
-            return f"{no_data_message}\n{actions_text}"
-        
-        # ========== USER HAS DATA - NORMAL FLOW ==========
-        # Handle goodbye messages
         if any(word in user_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end chat']):
             name = conv.get('name', 'Student')
             return f"Goodbye {name}! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓"
-        
-        # Handle summary request
+        # Handle summary request (FIRST CHECK)
         if any(word in user_lower for word in ['summary', 'my details', 'my profile', 'table', 'overview']):
-            name = conv.get('name', 'Student')
-            return self.generate_personalized_summary(student_data, name)
+            if student_data:
+                # Use personalized summary with user's actual data
+                name = conv.get('name', 'Student')
+                return self.generate_personalized_summary(student_data, name)
+            else:
+                return "I don't have your academic data yet. Please submit the form first to get your personalized summary."
         
         # Check for category-specific queries
         category_responses = {
@@ -730,11 +843,24 @@ class EnhancedChatAdvisor:
             'campus life balance': self.get_category_response('campus life balance')
         }
         
+        # Check if user asked for any specific category
         for category, response in category_responses.items():
             if any(word in user_lower for word in category.split()):
                 return response
         
-        # NORMAL CONVERSATION FLOW (user has data)
+        # Check out-of-scope ONLY after completion
+        if (conv['step'] == 'completed' and 
+        self.is_out_of_scope(user_msg) and 
+        user_lower not in ['hi', 'hello', 'hey', 'thanks', 'thank you']):
+            
+            return (
+            "Hmm 🤔 I'm not sure I have information about that. "
+            "I can provide help with academic topics like study techniques, "
+            "career guidance, exam preparation, and more.\n\n"
+            "Click any option below to get started!"
+        )
+        
+        # ORIGINAL CONVERSATION FLOW (EXACTLY AS BEFORE)
         if conv['step'] == 'greeting':
             conv['step'] = 'get_name'
             return "Hello! I'm your academic advisor. What's your name?"
@@ -748,26 +874,34 @@ class EnhancedChatAdvisor:
         
         elif conv['step'] == 'show_suggestions':
             if any(word in user_lower for word in ['yes', 'yeah', 'sure', 'ok', 'yep']):
-                # Generate personalized advice (same as Get Suggestion button)
-                advice = advisor_model.generate_advice(student_data, student_data.get('predicted_class', 'Average'))
-                conv['step'] = 'completed'
-                return f"Great! Here are my personalized suggestions for you, {conv['name']}:\n\n{advice}"
+                if student_data:
+                    advice = advisor_model.generate_advice(student_data, student_data.get('predicted_class', 'Average'))
+                    conv['step'] = 'completed'
+                    return f"Great! Here are my personalized suggestions for you, {conv['name']}:\n\n{advice}"
+                else:
+                    return "I don't have your academic data. Please submit the form first."
             elif any(word in user_lower for word in ['no', 'not', 'nope', 'later']):
                 conv['step'] = 'completed'
                 return f"No problem {conv['name']}! Feel free to ask anytime you need academic advice."
             else:
                 return "Please answer with 'yes' or 'no'. Would you like personalized academic suggestions?"
         
+        # AFTER COMPLETION - handle normal academic questions
         elif conv['step'] == 'completed':
-            # Handle normal conversation after completion
+            # Handle normal conversation
+            user_lower = user_msg.lower()
+            
             if any(word in user_lower for word in ['hi', 'hello', 'hey']):
                 return f"Hello again {conv['name']}! How can I help you today?"
+            
             elif any(word in user_lower for word in ['thanks', 'thank you']):
                 return f"You're welcome {conv['name']}! Good luck with your studies! 🎓"
+            
             elif any(word in user_lower for word in ['help', 'suggestion', 'advice']):
                 return f"I can help with study techniques, time management, and academic planning. What specifically do you need, {conv['name']}?"
+            
             else:
-                # Search knowledge base for academic queries
+                # For other messages, try to search knowledge base
                 results = help_system.search_knowledge(user_msg)
                 if results:
                     response = f"Here's what I found about '{user_msg}':\n\n"
@@ -779,9 +913,9 @@ class EnhancedChatAdvisor:
                     return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
         
         else:
-            return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
-
-# Replace the existing chat advisor with the fixed version
+ 
+            return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"# Replace the existing chat advisor with enhanced version
+        
 chat_advisor = EnhancedChatAdvisor()
 # ==================== YOUR EXISTING FLASK APP ====================
 app = Flask(__name__, template_folder='student_performance_dnn/templates')
