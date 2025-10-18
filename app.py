@@ -515,8 +515,7 @@ class StudentHelpSystem:
 
 # Initialize help system
 help_system = StudentHelpSystem()
-# ==================== ENHANCED CHAT ADVISOR (FIXED) ====================
-# ==================== ENHANCED CHAT ADVISOR (WITH AUTO RESET & PERSONALIZED SUMMARY) ====================
+# ==================== ENHANCED CHAT ADVISOR (FIXED FOR DATA CHECK) ====================
 class EnhancedChatAdvisor:
     def __init__(self):
         self.conversations = {}
@@ -791,15 +790,7 @@ class EnhancedChatAdvisor:
         ]
     
     def handle_message(self, session_id, user_message, student_data=None):
-        # AUTO-RESET: If student_data exists but conversation doesn't, reset conversation
-        
-        if student_data and session_id not in self.conversations:
-            self.conversations[session_id] = {
-                'step': 'greeting',
-                'name': None,
-                'awaiting_topic': False
-            }
-        
+        # Initialize conversation if not exists
         if session_id not in self.conversations:
             self.conversations[session_id] = {
                 'step': 'greeting',
@@ -810,24 +801,48 @@ class EnhancedChatAdvisor:
         conv = self.conversations[session_id]
         user_msg = user_message.strip()
         user_lower = user_msg.lower()
-        if not student_data :
+        
+        # ========== CRITICAL FIX: CHECK IF USER HAS ENTERED DATA ==========
+        if not student_data:
+            # If no data and user is trying to ask anything beyond basic greetings
             if conv['step'] == 'greeting':
-                conv['step'] = 'blocked_no_data'  # Block further conversation
-            if conv['step'] == 'blocked_no_data':
-              return (
-            "Hello! I'm your academic advisor. 👋\n\n"
-            "Please fill out the form on the left and click 'Analyze Performance' first to get your prediction results. "
-            "Then I can provide personalized suggestions based on your academic data!\n\n"
-                "Once you get your performance prediction, I'll be able to give you customized study tips and improvement strategies."
-        )
+                # Allow initial greeting to proceed
+                conv['step'] = 'get_name'
+                return "Hello! I'm your academic advisor. What's your name?"
             
+            elif conv['step'] == 'get_name':
+                if len(user_msg) < 2:
+                    return "Please enter a valid name:"
+                conv['name'] = user_msg
+                conv['step'] = 'blocked_no_data'
+                return (
+                    f"Nice to meet you, {conv['name']}! 👋\n\n"
+                    "I see you haven't entered your academic data yet. "
+                    "Please fill out the form on the left and click 'Analyze Performance' first to get your prediction results. "
+                    "Then I can provide personalized suggestions based on your academic data!\n\n"
+                    "Once you get your performance prediction, I'll be able to give you customized study tips and improvement strategies."
+                )
+            
+            elif conv['step'] == 'blocked_no_data':
+                # User keeps trying to ask questions without data
+                return (
+                    f"I'd love to help you {conv.get('name', '')}, but I need your academic data first! 📊\n\n"
+                    "Please:\n"
+                    "1. Fill out the form on the left\n"
+                    "2. Click 'Analyze Performance'\n"
+                    "3. Get your prediction results\n\n"
+                    "Then I can give you personalized advice based on your specific academic situation!"
+                )
+        
+        # ========== NORMAL FLOW: USER HAS ENTERED DATA ==========
+        # Handle goodbye messages
         if any(word in user_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end chat']):
             name = conv.get('name', 'Student')
             return f"Goodbye {name}! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓"
-        # Handle summary request (FIRST CHECK)
+        
+        # Handle summary request
         if any(word in user_lower for word in ['summary', 'my details', 'my profile', 'table', 'overview']):
             if student_data:
-                # Use personalized summary with user's actual data
                 name = conv.get('name', 'Student')
                 return self.generate_personalized_summary(student_data, name)
             else:
@@ -850,17 +865,17 @@ class EnhancedChatAdvisor:
         
         # Check out-of-scope ONLY after completion
         if (conv['step'] == 'completed' and 
-        self.is_out_of_scope(user_msg) and 
-        user_lower not in ['hi', 'hello', 'hey', 'thanks', 'thank you']):
+            self.is_out_of_scope(user_msg) and 
+            user_lower not in ['hi', 'hello', 'hey', 'thanks', 'thank you']):
             
             return (
-            "Hmm 🤔 I'm not sure I have information about that. "
-            "I can provide help with academic topics like study techniques, "
-            "career guidance, exam preparation, and more.\n\n"
-            "Click any option below to get started!"
-        )
+                "Hmm 🤔 I'm not sure I have information about that. "
+                "I can provide help with academic topics like study techniques, "
+                "career guidance, exam preparation, and more.\n\n"
+                "Click any option below to get started!"
+            )
         
-        # ORIGINAL CONVERSATION FLOW (EXACTLY AS BEFORE)
+        # ORIGINAL CONVERSATION FLOW (when user has data)
         if conv['step'] == 'greeting':
             conv['step'] = 'get_name'
             return "Hello! I'm your academic advisor. What's your name?"
@@ -913,9 +928,9 @@ class EnhancedChatAdvisor:
                     return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
         
         else:
- 
-            return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"# Replace the existing chat advisor with enhanced version
-        
+            return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
+
+# Replace the existing chat advisor with enhanced version
 chat_advisor = EnhancedChatAdvisor()
 # ==================== YOUR EXISTING FLASK APP ====================
 app = Flask(__name__, template_folder='student_performance_dnn/templates')
