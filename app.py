@@ -689,15 +689,17 @@ class EnhancedChatAdvisor:
         user_msg = user_message.strip()
         user_lower = user_msg.lower()
         
-        # ========== CRITICAL: CHECK IF USER HAS DATA ==========
-        # More robust check for student data
+        # ========== CRITICAL FIX: BETTER DATA CHECK ==========
         has_student_data = (student_data and 
                            isinstance(student_data, dict) and 
                            'total_cgpa' in student_data and
-                           student_data.get('total_cgpa') is not None)
-        
+                           student_data.get('total_cgpa') is not None and
+                           student_data.get('total_cgpa') != '')
+
         print(f"DEBUG: has_student_data = {has_student_data}")
-        print(f"DEBUG: student_data = {student_data}")
+        if student_data:
+            print(f"DEBUG: student_data keys = {student_data.keys()}")
+            print(f"DEBUG: total_cgpa = {student_data.get('total_cgpa')}")
 
         if not has_student_data:
             # NO DATA - Show message to fill form first
@@ -1004,39 +1006,59 @@ def home():
     return render_template('home.html')  # Show landing page first
 
 # ==================== NEW CHAT ROUTES ====================
-# ==================== NEW CHAT ROUTES ====================
 @app.route('/start_chat', methods=['POST'])
 def start_chat():
-    session_id = request.json.get('session_id', 'default')
-    student_data = session.get('student_data')
-    
-    # AUTO-RESET: If we have new student data, reset the conversation
-    if student_data and session_id in chat_advisor.conversations:
-        # Keep only the name if it exists, reset everything else
-        old_name = chat_advisor.conversations[session_id].get('name')
-        chat_advisor.conversations[session_id] = {
-            'step': 'greeting',
-            'name': old_name,  # Keep the name if user already provided it
-            'awaiting_topic': False
-        }
-    
-    response = chat_advisor.handle_message(session_id, "", student_data)
-    return jsonify({'response': response})
+    try:
+        session_id = request.json.get('session_id', 'default')
+        student_data = session.get('student_data')
+        
+        print(f"CHAT DEBUG: Starting chat for session {session_id}")
+        print(f"CHAT DEBUG: Student data available: {bool(student_data)}")
+        
+        # AUTO-RESET: If we have new student data, reset the conversation
+        if student_data and session_id in chat_advisor.conversations:
+            # Keep only the name if it exists, reset everything else
+            old_name = chat_advisor.conversations[session_id].get('name')
+            chat_advisor.conversations[session_id] = {
+                'step': 'greeting',
+                'name': old_name,
+                'awaiting_topic': False
+            }
+        
+        response = chat_advisor.handle_message(session_id, "", student_data)
+        return jsonify({'response': response})
+    except Exception as e:
+        print(f"CHAT ERROR: {str(e)}")
+        return jsonify({'response': f"I'm having trouble starting the chat. Please try again. Error: {str(e)}"})
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    session_id = request.json.get('session_id', 'default')
-    user_message = request.json.get('message', '')
-    student_data = session.get('student_data')
-    
-    response = chat_advisor.handle_message(session_id, user_message, student_data)
-    return jsonify({'response': response})
+    try:
+        session_id = request.json.get('session_id', 'default')
+        user_message = request.json.get('message', '')
+        student_data = session.get('student_data')
+        
+        print(f"CHAT DEBUG: Message from {session_id}: {user_message}")
+        print(f"CHAT DEBUG: Student data: {student_data}")
+        
+        response = chat_advisor.handle_message(session_id, user_message, student_data)
+        return jsonify({'response': response})
+    except Exception as e:
+        print(f"CHAT ERROR: {str(e)}")
+        return jsonify({'response': "Sorry, I encountered an error. Please try again."})
 
 @app.route('/reset_chat', methods=['POST'])
 def reset_chat():
     session_id = request.json.get('session_id', 'default')
     if session_id in chat_advisor.conversations:
         del chat_advisor.conversations[session_id]
+    return jsonify({'status': 'success'})
+
+# ==================== CRITICAL FIX: ADD CLEAR SESSION ROUTE ====================
+@app.route('/clear_session', methods=['POST'])
+def clear_session():
+    """Clear session data"""
+    session.clear()
     return jsonify({'status': 'success'})
 
 # Diagnostic route to understand the issue

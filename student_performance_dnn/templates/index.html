@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ALL YOUR EXISTING CSS STAYS EXACTLY THE SAME - NO CHANGES */
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
@@ -743,73 +744,47 @@
                             background: rgba(0,0,0,0.5); z-index: 999;"></div>
 
 <script>
-    // Store form data when submitting
+    // ========== CRITICAL FIX: SIMPLIFIED FORM SUBMISSION ==========
     document.getElementById('prediction-form').addEventListener('submit', function(e) {
-        // Store the current form data BEFORE the form submits
-        const formData = {
-            total_cgpa: document.getElementById('total_cgpa').value,
-            prevsem_cgpa: document.getElementById('prevsem_cgpa').value,
-            attendance: document.getElementById('attendance').value,
-            study_hours: document.getElementById('study_hours').value,
-            backlogs: document.getElementById('backlogs').value,
-            competitions: document.getElementById('competitions').value,
-            projects_internships: document.getElementById('projects_internships').value,
-            confidence_level: document.getElementById('confidence_level').value
-        };
-        
-        // Store data for restoration after page reload
-        localStorage.setItem('studentFormData', JSON.stringify(formData));
+        // Let the form submit normally first
+        // The data will be stored in session by Flask
         
         // Show loading state
         const submitBtn = document.getElementById('analyze-btn');
+        const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Performance...';
         submitBtn.disabled = true;
         
-        // Let the form submit normally - the data will be restored after page reload
+        // Re-enable button after 3 seconds in case of error
+        setTimeout(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }, 3000);
     });
 
-    // Restore form data when page loads
+    // ========== CRITICAL FIX: SIMPLIFIED PAGE LOAD ==========
     document.addEventListener('DOMContentLoaded', function() {
-        // Check if we have prediction results (meaning form was submitted)
-        const hasPrediction = document.querySelector('.result-container.show') !== null;
+        console.log('Page loaded - checking for prediction results');
         
-        if (hasPrediction) {
-            // Restore form data from localStorage
-            const storedData = localStorage.getItem('studentFormData');
-            if (storedData) {
-                const formData = JSON.parse(storedData);
-                
-                // Fill all form fields with the stored data
-                document.getElementById('total_cgpa').value = formData.total_cgpa || '';
-                document.getElementById('prevsem_cgpa').value = formData.prevsem_cgpa || '';
-                document.getElementById('attendance').value = formData.attendance || '';
-                document.getElementById('study_hours').value = formData.study_hours || '';
-                document.getElementById('backlogs').value = formData.backlogs || '';
-                document.getElementById('competitions').value = formData.competitions || '';
-                document.getElementById('projects_internships').value = formData.projects_internships || '';
-                document.getElementById('confidence_level').value = formData.confidence_level || '';
-            }
-        }
-        
-        // Set up retry buttons to refresh page and clear data
+        // Set up retry buttons to refresh page
         const retryButtons = document.querySelectorAll('#retry-btn, #retry-btn-2');
         retryButtons.forEach(button => {
             if (button) {
                 button.addEventListener('click', function() {
-                    // Clear stored data and refresh
-                    localStorage.removeItem('studentFormData');
+                    console.log('Retry button clicked - refreshing page');
                     location.reload();
                 });
             }
         });
 
-        // Clear session data on initial load
+        // Clear any stuck session data on initial load
         fetch('/clear_session', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-        });
+        }).catch(err => console.log('Session clear request failed:', err));
     });
 
+    // ========== ALL YOUR EXISTING JAVASCRIPT FUNCTIONS STAY EXACTLY THE SAME ==========
     // Real-time validation
     document.querySelectorAll('input[type="number"]').forEach(input => {
         input.addEventListener('input', function() {
@@ -838,52 +813,60 @@
         });
     });
 
-    // Chatbot functions
+    // ========== CRITICAL FIX: IMPROVED CHAT FUNCTIONS ==========
     let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
     
     function startStaticChat() {
+        console.log('Starting static chat');
         document.getElementById('chatModal').style.display = 'block';
         document.getElementById('chatOverlay').style.display = 'block';
         document.getElementById('chatMessages').innerHTML = '';
         
-        const hasPrediction = document.querySelector('.result-container.show') !== null;
-        
-        if (!hasPrediction) {
-            fetch('/start_chat', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({session_id: currentSessionId})
-            })
-            .then(response => response.json())
-            .then(data => {
-                addChatMessage(data.response, 'advisor');
-            });
-        } else {
-            startSuggestionChat();
-        }
+        // Always start fresh chat
+        fetch('/start_chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({session_id: currentSessionId})
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            addChatMessage(data.response, 'advisor');
+        })
+        .catch(error => {
+            console.error('Chat start error:', error);
+            addChatMessage("I'm having trouble starting the chat. Please make sure you've submitted the form first and try again.", 'advisor');
+        });
     }
 
     function startSuggestionChat() {
+        console.log('Starting suggestion chat');
         document.getElementById('chatModal').style.display = 'block';
         document.getElementById('chatOverlay').style.display = 'block';
         document.getElementById('chatMessages').innerHTML = '';
-        
-        const hasPrediction = document.querySelector('.result-container.show') !== null;
-        
-        if (!hasPrediction) {
-            addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form and get your performance prediction first. Then I can provide personalized suggestions!", 'advisor');
-            return;
-        }
         
         fetch('/start_chat', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({session_id: currentSessionId})
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             addChatMessage(data.response, 'advisor');
             setTimeout(addQuickActions, 100);
+        })
+        .catch(error => {
+            console.error('Suggestion chat error:', error);
+            addChatMessage("I'm having trouble accessing your data. Please make sure you've submitted the form and try again.", 'advisor');
         });
     }
 
