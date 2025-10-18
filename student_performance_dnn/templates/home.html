@@ -953,17 +953,15 @@ footer::before {
   <div class="login-container">
     <div class="login-section">
       <h3>Student Portal</h3>
-      <form id="loginForm" onsubmit="return validateLogin()">
-        <div class="input-group">
-          <label for="regno"><i class="fas fa-id-card"></i> Register Number</label>
-          <input type="text" id="regno" placeholder="Enter your register number" required>
-        </div>
-        <button type="submit" class="btn">
-          <i class="fas fa-sign-in-alt"></i> login
-        </button>
-        <p class="error-message" id="error">❌ Please enter a valid register number!</p>
-        <p class="info-text">Enter your college register number to access personalized insights</p>
-      </form>
+<form id="loginForm" onsubmit="return validateLogin()" method="POST" action="/app">
+    <div class="input-group">
+        <label for="regno"><i class="fas fa-id-card"></i> Register Number</label>
+        <input type="text" id="regno" name="regno" placeholder="Enter your register number" required>
+    </div>
+    <button type="submit" class="btn">
+        <i class="fas fa-sign-in-alt"></i> Login to App
+    </button>
+</form>
     </div>
   </div>
 </section>
@@ -1058,12 +1056,11 @@ footer::before {
 </footer>
 
   <script>
-   function validateLogin() {
+  function validateLogin() {
   const regno = document.getElementById('regno').value.trim().toUpperCase();
   const error = document.getElementById('error');
 
   // Strict register number validation pattern
-  // Format: YY (year) + 091A (exactly) + 3-5 alphanumeric digits
   const regnoPattern = /^\d{2}091A[A-Z0-9]{3,5}$/i;
   
   if (regno.length > 0 && regnoPattern.test(regno)) {
@@ -1073,17 +1070,11 @@ footer::before {
     // Show loading state
     const btn = document.querySelector('.btn');
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> logging in...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Accessing Advisor...';
     btn.disabled = true;
     
-    setTimeout(() => {
-      alert(`Welcome ${regno}! Accessing your personalized Advisor...`);
-      
-      // REDIRECT TO YOUR MAIN APPLICATION
-      window.location.href = "index.html"; // Your main predictor application
-    }, 1500);
-    
-    return false;
+    // Form will automatically submit to /app route
+    return true; // Allow form submission
   } else {
     error.style.display = "block";
     
@@ -1099,10 +1090,10 @@ footer::before {
     setTimeout(() => {
       input.style.animation = '';
     }, 500);
+    
+    return false; // Prevent form submission
   }
-  return false;
 }
-
 // Add shake animation to CSS
 const style = document.createElement('style');
 style.textContent = `
