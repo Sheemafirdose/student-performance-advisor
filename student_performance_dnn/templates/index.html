@@ -743,6 +743,16 @@
                             background: rgba(0,0,0,0.5); z-index: 999;"></div>
 
     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+        // Clear stored session data to prevent using old predictions
+        fetch('/clear_session', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+        });
+        
+        // Also clear localStorage
+        localStorage.removeItem('studentFormData');
+    });
         // Store form data when page loads if it exists
         document.addEventListener('DOMContentLoaded', function() {
             // Check if we have form data to restore (after form submission)

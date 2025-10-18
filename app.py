@@ -1031,6 +1031,17 @@ def reset_chat():
     if session_id in chat_advisor.conversations:
         del chat_advisor.conversations[session_id]
     return jsonify({'status': 'success'})
+# Add this AFTER all your existing @app.route functions but BEFORE if __name__ == "__main__":
+
+@app.route('/clear_session', methods=['POST'])
+def clear_session():
+    """Clear session data to prevent using old predictions"""
+    if 'student_data' in session:
+        session.pop('student_data')
+    return jsonify({'status': 'session cleared'})
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=False)
 
 # Diagnostic route to understand the issue
 @app.route('/scaler_info')
