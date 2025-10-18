@@ -598,8 +598,8 @@
                         <button type="submit" class="btn" id="analyze-btn">
                             <i class="fas fa-chart-bar"></i> Analyze Performance
                         </button>
-                        <button type="button" class="btn btn-secondary" id="retry-btn-left" style="display: none;">
-                            <i class="fas fa-redo"></i> Try Again (Keep Data)
+                        <button type="button" class="btn btn-secondary" id="retry-btn" style="display: none;">
+                            <i class="fas fa-redo"></i> Try Again
                         </button>
                     </div>
                 </form>
@@ -672,9 +672,12 @@
         
         // Initialize form data from localStorage if available
         document.addEventListener('DOMContentLoaded', function() {
-            // Clear everything on browser refresh
-            localStorage.removeItem('studentFormData');
-            localStorage.removeItem('studentResults');
+            // Load saved form data
+            const savedData = localStorage.getItem('studentFormData');
+            if (savedData) {
+                formData = JSON.parse(savedData);
+                populateFormWithData();
+            }
             
             // Setup form submission
             document.getElementById('prediction-form').addEventListener('submit', function(e) {
@@ -683,9 +686,9 @@
                 submitForm();
             });
             
-            // Setup LEFT SIDE retry button (keeps data, only clears results)
-            document.getElementById('retry-btn-left').addEventListener('click', function() {
-                resetResultsOnly();
+            // Setup retry button (LEFT SIDE - clears everything)
+            document.getElementById('retry-btn').addEventListener('click', function() {
+                clearAllData();
             });
             
             // Real-time validation
@@ -701,7 +704,6 @@
             const form = document.getElementById('prediction-form');
             const formElements = form.elements;
             
-            formData = {};
             for (let element of formElements) {
                 if (element.name && element.value) {
                     formData[element.name] = element.value;
@@ -711,19 +713,32 @@
             localStorage.setItem('studentFormData', JSON.stringify(formData));
         }
 
-        // LEFT SIDE: Reset only results (keep form data)
-        function resetResultsOnly() {
-            localStorage.removeItem('studentResults');
-            resetResults();
+        // Populate form with saved data
+        function populateFormWithData() {
+            for (const [name, value] of Object.entries(formData)) {
+                const element = document.querySelector(`[name="${name}"]`);
+                if (element) {
+                    element.value = value;
+                }
+            }
+            
+            // Show retry button if we have data
+            if (Object.keys(formData).length > 0) {
+                document.getElementById('retry-btn').style.display = 'block';
+            }
         }
 
-        // RIGHT SIDE: Reset only the right side to initial state
-        function resetRightSideOnly() {
-            localStorage.removeItem('studentResults');
+        // Clear all data (LEFT SIDE Try Again)
+        function clearAllData() {
+            formData = {};
+            localStorage.removeItem('studentFormData');
+            document.getElementById('prediction-form').reset();
+            document.getElementById('retry-btn').style.display = 'none';
             resetResults();
+            location.reload(); // Full refresh to ensure clean state
         }
 
-        // Reset only results display
+        // Reset only results (RIGHT SIDE Try Again)
         function resetResults() {
             document.getElementById('placeholder-message').style.display = 'block';
             document.getElementById('result-container').classList.remove('show');
@@ -754,29 +769,27 @@
             // Simulate form submission (replace with actual AJAX call)
             setTimeout(() => {
                 // This is where you would make your actual API call
-                const predictionText = "Good Performance";
-                const confidenceScore = 85.5;
-                const probabilities = {
-                    'Below Average': 5.2,
-                    'Average': 24.8,
-                    'Good': 45.3,
-                    'Excellent': 24.7
-                };
-                
-                // Save results to localStorage
-                const results = {
-                    predictionText: predictionText,
-                    confidenceScore: confidenceScore,
-                    probabilities: probabilities
-                };
-                localStorage.setItem('studentResults', JSON.stringify(results));
-                
-                displayResults(predictionText, confidenceScore, probabilities);
+                // For now, we'll simulate a response
+                simulatePredictionResponse();
                 
                 submitBtn.innerHTML = '<i class="fas fa-chart-bar"></i> Analyze Performance';
                 submitBtn.disabled = false;
-                document.getElementById('retry-btn-left').style.display = 'block';
+                document.getElementById('retry-btn').style.display = 'block';
             }, 2000);
+        }
+
+        // Simulate prediction response (replace with actual API call)
+        function simulatePredictionResponse() {
+            const predictionText = "Good Performance";
+            const confidenceScore = 85.5;
+            const probabilities = {
+                'Below Average': 5.2,
+                'Average': 24.8,
+                'Good': 45.3,
+                'Excellent': 24.7
+            };
+            
+            displayResults(predictionText, confidenceScore, probabilities);
         }
 
         // Display results in the right panel
@@ -853,8 +866,8 @@
                 </div>
                 
                 <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="resetRightSideOnly()">
-                        <i class="fas fa-redo"></i> Try Again (Refresh Right Side)
+                    <button type="button" class="btn btn-secondary" onclick="resetResults()">
+                        <i class="fas fa-redo"></i> Try Again
                     </button>
                 </div>
             `;
@@ -863,7 +876,7 @@
             resultContainer.className = `result-container show ${resultClass}`;
         }
 
-        // Chat functionality
+        // Chat functionality (existing code)
         let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
         
         function startStaticChat() {
@@ -892,13 +905,19 @@
                 return;
             }
             
-            // Simulate API call
-            setTimeout(() => {
-                addChatMessage("Hello! I'm your AI Academic Advisor. I can see your performance prediction and I'm here to help you improve! What specific area would you like guidance on?", 'advisor');
+            fetch('/start_chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({session_id: currentSessionId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                addChatMessage(data.response, 'advisor');
                 setTimeout(addQuickActions, 100);
-            }, 500);
+            });
         }
 
+        // ... rest of the chat functions remain the same ...
         function closeChat() {
             document.getElementById('chatModal').style.display = 'none';
             document.getElementById('chatOverlay').style.display = 'none';
@@ -923,16 +942,31 @@
             addChatMessage('You: ' + message, 'user');
             input.value = '';
             
-            // Simulate AI response
-            setTimeout(() => {
-                addChatMessage("I understand you're asking about: " + message + ". Based on your academic profile, I recommend focusing on consistent study habits and regular revision. Would you like more specific advice?", 'advisor');
+            fetch('/send_message', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    session_id: currentSessionId,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                addChatMessage(data.response, 'advisor');
                 setTimeout(addQuickActions, 100);
-            }, 1000);
+            });
         }
 
         function resetChat() {
-            document.getElementById('chatMessages').innerHTML = '';
-            startSuggestionChat();
+            fetch('/reset_chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({session_id: currentSessionId})
+            })
+            .then(() => {
+                document.getElementById('chatMessages').innerHTML = '';
+                startSuggestionChat();
+            });
         }
 
         function addChatMessage(text, sender) {
