@@ -598,9 +598,6 @@
                         <button type="submit" class="btn" id="analyze-btn">
                             <i class="fas fa-chart-bar"></i> Analyze Performance
                         </button>
-                        <button type="button" class="btn btn-secondary" id="retry-btn-left" style="display: none;">
-                            <i class="fas fa-redo"></i> Try Again (Keep Data)
-                        </button>
                     </div>
                 </form>
                 
@@ -683,11 +680,6 @@
                 submitForm();
             });
             
-            // Setup LEFT SIDE retry button (keeps data, only clears results)
-            document.getElementById('retry-btn-left').addEventListener('click', function() {
-                resetResultsOnly();
-            });
-            
             // Real-time validation
             document.querySelectorAll('input[type="number"]').forEach(input => {
                 input.addEventListener('input', function() {
@@ -711,23 +703,11 @@
             localStorage.setItem('studentFormData', JSON.stringify(formData));
         }
 
-        // LEFT SIDE: Reset only results (keep form data)
-        function resetResultsOnly() {
+        // Refresh entire page (used by Try Again button)
+        function refreshPage() {
+            localStorage.removeItem('studentFormData');
             localStorage.removeItem('studentResults');
-            resetResults();
-        }
-
-        // RIGHT SIDE: Reset only the right side to initial state
-        function resetRightSideOnly() {
-            localStorage.removeItem('studentResults');
-            resetResults();
-        }
-
-        // Reset only results display
-        function resetResults() {
-            document.getElementById('placeholder-message').style.display = 'block';
-            document.getElementById('result-container').classList.remove('show');
-            document.getElementById('result-container').innerHTML = '';
+            location.reload();
         }
 
         // Validate number inputs
@@ -775,7 +755,6 @@
                 
                 submitBtn.innerHTML = '<i class="fas fa-chart-bar"></i> Analyze Performance';
                 submitBtn.disabled = false;
-                document.getElementById('retry-btn-left').style.display = 'block';
             }, 2000);
         }
 
@@ -784,7 +763,7 @@
             const resultContainer = document.getElementById('result-container');
             const placeholder = document.getElementById('placeholder-message');
             
-            // Hide placeholder
+            // Hide placeholder completely - FIXED THE ISSUE
             placeholder.style.display = 'none';
             
             // Determine result class based on prediction
@@ -853,8 +832,8 @@
                 </div>
                 
                 <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="resetRightSideOnly()">
-                        <i class="fas fa-redo"></i> Try Again (Refresh Right Side)
+                    <button type="button" class="btn btn-secondary" onclick="refreshPage()">
+                        <i class="fas fa-redo"></i> Try Again
                     </button>
                 </div>
             `;
@@ -863,7 +842,7 @@
             resultContainer.className = `result-container show ${resultClass}`;
         }
 
-        // Chat functionality
+        // Chat functionality (same as before)
         let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
         
         function startStaticChat() {
@@ -899,6 +878,7 @@
             }, 500);
         }
 
+        // ... rest of chat functions remain the same ...
         function closeChat() {
             document.getElementById('chatModal').style.display = 'none';
             document.getElementById('chatOverlay').style.display = 'none';
@@ -981,7 +961,7 @@
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'quick-actions';
             actionsDiv.style.margin = '15px 0';
-            actionsDiv.style.textAlign = 'center';
+            actionsDiv.style.text-align = 'center';
             actionsDiv.style.padding = '15px';
             actionsDiv.style.background = '#f8f9fa';
             actionsDiv.style.borderRadius = '10px';
