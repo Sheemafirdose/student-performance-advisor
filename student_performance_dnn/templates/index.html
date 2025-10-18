@@ -304,6 +304,7 @@
             text-align: center;
             color: var(--gray);
             padding: 50px 30px;
+            display: block !important;  /* ADD THIS LINE */
         }
 
         .placeholder-message i {
@@ -790,21 +791,48 @@
         });
 
                 // Retry button functionality
-        document.querySelectorAll('#retry-btn, #retry-btn-2, #retry-btn-3').forEach(button => {
-            button.addEventListener('click', function() {
-                // Reset form
-                document.getElementById('prediction-form').reset();
-                
-                // Reset input borders
-                document.querySelectorAll('input[type="number"]').forEach(input => {
-                    input.style.borderColor = '#e9ecef';
-                    input.style.boxShadow = 'none';
-                });
-                
-                // Reload the page to clear results
-                window.location.href = '/';
+        // Retry button functionality - DIFFERENT BEHAVIOR FOR LEFT vs RIGHT
+document.addEventListener('DOMContentLoaded', function() {
+    // LEFT SIDE "Try Again" - Clear everything (only shows when there's prediction/error)
+    const leftRetryBtn = document.getElementById('retry-btn');
+    if (leftRetryBtn) {
+        leftRetryBtn.addEventListener('click', function() {
+            // Reset form completely
+            document.getElementById('prediction-form').reset();
+            
+            // Reset input borders
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.style.borderColor = '#e9ecef';
+                input.style.boxShadow = 'none';
             });
+            
+            // Reload page to clear predictions and go back to fresh state
+            location.reload();
         });
+    }
+    
+    // RIGHT SIDE "Try Again" buttons - Keep data, clear only predictions
+    const rightRetryBtns = document.querySelectorAll('#retry-btn-2, #retry-btn-3');
+    rightRetryBtns.forEach(button => {
+        button.addEventListener('click', function() {
+            // Just hide the prediction results, keep form data
+            const resultContainer = document.querySelector('.result-container.show');
+            if (resultContainer) {
+                resultContainer.classList.remove('show');
+                resultContainer.style.display = 'none';
+            }
+            
+            // Show the placeholder message again
+            const placeholder = document.querySelector('.placeholder-message');
+            if (placeholder) {
+                placeholder.style.display = 'block';
+            }
+            
+            // Remove the right side retry buttons (they'll come back on new prediction)
+            rightRetryBtns.forEach(btn => btn.style.display = 'none');
+        });
+    });
+});
         // ===== ADD THE NEW FUNCTION HERE =====
 // Function for static chatbot icon
 // Function for static chatbot icon - UPDATED
