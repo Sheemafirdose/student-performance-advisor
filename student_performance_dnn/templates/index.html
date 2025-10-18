@@ -598,6 +598,9 @@
                         <button type="submit" class="btn" id="analyze-btn">
                             <i class="fas fa-chart-bar"></i> Analyze Performance
                         </button>
+                        <button type="button" class="btn btn-secondary" id="retry-btn-left" style="display: none;">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
                     </div>
                 </form>
                 
@@ -669,15 +672,30 @@
         
         // Initialize form data from localStorage if available
         document.addEventListener('DOMContentLoaded', function() {
-            // Clear everything on browser refresh
-            localStorage.removeItem('studentFormData');
-            localStorage.removeItem('studentResults');
+            // Load saved form data
+            const savedData = localStorage.getItem('studentFormData');
+            if (savedData) {
+                formData = JSON.parse(savedData);
+                populateFormWithData();
+            }
+            
+            // Load saved results if available
+            const savedResults = localStorage.getItem('studentResults');
+            if (savedResults) {
+                const results = JSON.parse(savedResults);
+                displayResults(results.predictionText, results.confidenceScore, results.probabilities);
+            }
             
             // Setup form submission
             document.getElementById('prediction-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 saveFormData();
                 submitForm();
+            });
+            
+            // Setup LEFT SIDE retry button (same as right side - just refresh results)
+            document.getElementById('retry-btn-left').addEventListener('click', function() {
+                resetResultsOnly();
             });
             
             // Real-time validation
@@ -703,11 +721,32 @@
             localStorage.setItem('studentFormData', JSON.stringify(formData));
         }
 
-        // Refresh entire page (used by Try Again button)
-        function refreshPage() {
-            localStorage.removeItem('studentFormData');
+        // Populate form with saved data
+        function populateFormWithData() {
+            for (const [name, value] of Object.entries(formData)) {
+                const element = document.querySelector(`[name="${name}"]`);
+                if (element) {
+                    element.value = value;
+                }
+            }
+            
+            // Show left side retry button if we have data
+            if (Object.keys(formData).length > 0) {
+                document.getElementById('retry-btn-left').style.display = 'block';
+            }
+        }
+
+        // BOTH SIDES: Reset only results (keep form data)
+        function resetResultsOnly() {
             localStorage.removeItem('studentResults');
-            location.reload();
+            resetResults();
+        }
+
+        // Reset only results display
+        function resetResults() {
+            document.getElementById('placeholder-message').style.display = 'block';
+            document.getElementById('result-container').classList.remove('show');
+            document.getElementById('result-container').innerHTML = '';
         }
 
         // Validate number inputs
@@ -755,6 +794,7 @@
                 
                 submitBtn.innerHTML = '<i class="fas fa-chart-bar"></i> Analyze Performance';
                 submitBtn.disabled = false;
+                document.getElementById('retry-btn-left').style.display = 'block';
             }, 2000);
         }
 
@@ -763,7 +803,7 @@
             const resultContainer = document.getElementById('result-container');
             const placeholder = document.getElementById('placeholder-message');
             
-            // Hide placeholder completely - FIXED THE ISSUE
+            // Hide placeholder
             placeholder.style.display = 'none';
             
             // Determine result class based on prediction
@@ -832,7 +872,7 @@
                 </div>
                 
                 <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="refreshPage()">
+                    <button type="button" class="btn btn-secondary" onclick="resetResultsOnly()">
                         <i class="fas fa-redo"></i> Try Again
                     </button>
                 </div>
@@ -961,7 +1001,7 @@
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'quick-actions';
             actionsDiv.style.margin = '15px 0';
-            actionsDiv.style.text-align = 'center';
+            actionsDiv.style.textAlign = 'center';
             actionsDiv.style.padding = '15px';
             actionsDiv.style.background = '#f8f9fa';
             actionsDiv.style.borderRadius = '10px';
