@@ -1107,5 +1107,64 @@
             if (e.key === 'Enter') sendChatMessage();
         });
     </script>
+    <script>
+    // Store form data when submitting and prevent form reset
+    document.getElementById('prediction-form').addEventListener('submit', function(e) {
+        // Prevent the form from resetting and losing data
+        e.preventDefault();
+        
+        // Store the current form data
+        const formData = {
+            total_cgpa: document.getElementById('total_cgpa').value,
+            prevsem_cgpa: document.getElementById('prevsem_cgpa').value,
+            attendance: document.getElementById('attendance').value,
+            study_hours: document.getElementById('study_hours').value,
+            backlogs: document.getElementById('backlogs').value,
+            competitions: document.getElementById('competitions').value,
+            projects_internships: document.getElementById('projects_internships').value,
+            confidence_level: document.getElementById('confidence_level').value
+        };
+        
+        // Store data for persistence
+        localStorage.setItem('studentFormData', JSON.stringify(formData));
+        
+        // Show loading state
+        const submitBtn = document.getElementById('analyze-btn');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Performance...';
+        submitBtn.disabled = true;
+        
+        // Submit the form normally (this will keep the data in fields)
+        this.submit();
+    });
+
+    // Restore form data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Always restore form data from localStorage if it exists
+        const storedData = localStorage.getItem('studentFormData');
+        if (storedData) {
+            const formData = JSON.parse(storedData);
+            document.getElementById('total_cgpa').value = formData.total_cgpa || '';
+            document.getElementById('prevsem_cgpa').value = formData.prevsem_cgpa || '';
+            document.getElementById('attendance').value = formData.attendance || '';
+            document.getElementById('study_hours').value = formData.study_hours || '';
+            document.getElementById('backlogs').value = formData.backlogs || '';
+            document.getElementById('competitions').value = formData.competitions || '';
+            document.getElementById('projects_internships').value = formData.projects_internships || '';
+            document.getElementById('confidence_level').value = formData.confidence_level || '';
+        }
+        
+        // Set up retry buttons to refresh page
+        const retryButtons = document.querySelectorAll('#retry-btn, #retry-btn-2');
+        retryButtons.forEach(button => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    // Clear stored data and refresh
+                    localStorage.removeItem('studentFormData');
+                    location.reload();
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>
