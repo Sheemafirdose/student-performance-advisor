@@ -599,7 +599,7 @@
                             <i class="fas fa-chart-bar"></i> Analyze Performance
                         </button>
                         <button type="button" class="btn btn-secondary" id="retry-btn-left" style="display: none;">
-                            <i class="fas fa-redo"></i> Try Again
+                            <i class="fas fa-redo"></i> Try Again (Keep Data)
                         </button>
                     </div>
                 </form>
@@ -672,19 +672,9 @@
         
         // Initialize form data from localStorage if available
         document.addEventListener('DOMContentLoaded', function() {
-            // Load saved form data
-            const savedData = localStorage.getItem('studentFormData');
-            if (savedData) {
-                formData = JSON.parse(savedData);
-                populateFormWithData();
-            }
-            
-            // Load saved results if available
-            const savedResults = localStorage.getItem('studentResults');
-            if (savedResults) {
-                const results = JSON.parse(savedResults);
-                displayResults(results.predictionText, results.confidenceScore, results.probabilities);
-            }
+            // Clear everything on browser refresh
+            localStorage.removeItem('studentFormData');
+            localStorage.removeItem('studentResults');
             
             // Setup form submission
             document.getElementById('prediction-form').addEventListener('submit', function(e) {
@@ -693,7 +683,7 @@
                 submitForm();
             });
             
-            // Setup LEFT SIDE retry button (same as right side - just refresh results)
+            // Setup LEFT SIDE retry button (keeps data, only clears results)
             document.getElementById('retry-btn-left').addEventListener('click', function() {
                 resetResultsOnly();
             });
@@ -721,23 +711,14 @@
             localStorage.setItem('studentFormData', JSON.stringify(formData));
         }
 
-        // Populate form with saved data
-        function populateFormWithData() {
-            for (const [name, value] of Object.entries(formData)) {
-                const element = document.querySelector(`[name="${name}"]`);
-                if (element) {
-                    element.value = value;
-                }
-            }
-            
-            // Show left side retry button if we have data
-            if (Object.keys(formData).length > 0) {
-                document.getElementById('retry-btn-left').style.display = 'block';
-            }
+        // LEFT SIDE: Reset only results (keep form data)
+        function resetResultsOnly() {
+            localStorage.removeItem('studentResults');
+            resetResults();
         }
 
-        // BOTH SIDES: Reset only results (keep form data)
-        function resetResultsOnly() {
+        // RIGHT SIDE: Reset only the right side to initial state
+        function resetRightSideOnly() {
             localStorage.removeItem('studentResults');
             resetResults();
         }
@@ -872,8 +853,8 @@
                 </div>
                 
                 <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="resetResultsOnly()">
-                        <i class="fas fa-redo"></i> Try Again
+                    <button type="button" class="btn btn-secondary" onclick="resetRightSideOnly()">
+                        <i class="fas fa-redo"></i> Try Again (Refresh Right Side)
                     </button>
                 </div>
             `;
@@ -882,7 +863,7 @@
             resultContainer.className = `result-container show ${resultClass}`;
         }
 
-        // Chat functionality (same as before)
+        // Chat functionality
         let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
         
         function startStaticChat() {
@@ -918,7 +899,6 @@
             }, 500);
         }
 
-        // ... rest of chat functions remain the same ...
         function closeChat() {
             document.getElementById('chatModal').style.display = 'none';
             document.getElementById('chatOverlay').style.display = 'none';
