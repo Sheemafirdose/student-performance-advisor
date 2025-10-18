@@ -118,6 +118,7 @@
       display: none;
       flex-direction: column;
       cursor: pointer;
+      z-index: 1001;
     }
 
     .menu-toggle span {
@@ -234,7 +235,7 @@
       color: var(--text-light);
     }
 
-    /* LOGIN SECTION */
+    /* LOGIN SECTION - FIXED FOR MOBILE */
     .login-container {
       display: flex;
       justify-content: center;
@@ -743,7 +744,7 @@
       box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* RESPONSIVE */
+    /* RESPONSIVE STYLES - FIXED MOBILE LOGIN */
     @media (max-width: 1024px) {
       .hero-content h2 {
         font-size: 3rem;
@@ -751,6 +752,10 @@
       
       .section-title {
         font-size: 2.5rem;
+      }
+      
+      .login-section {
+        padding: 40px 50px;
       }
     }
 
@@ -840,6 +845,28 @@
       .get-in-touch {
         text-align: center;
       }
+      
+      /* FIXED LOGIN SECTION FOR MOBILE */
+      .login-section {
+        padding: 30px 25px;
+        width: 95%;
+        margin: 0 auto;
+      }
+      
+      .login-section h3 {
+        font-size: 1.8rem;
+      }
+      
+      .input-group input {
+        padding: 15px 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      .btn {
+        padding: 15px 25px;
+        width: 100%;
+      }
     }
 
     @media (max-width: 480px) {
@@ -858,6 +885,82 @@
       .footer-links {
         flex-direction: column;
         gap: 10px;
+      }
+      
+      .logo h1 {
+        font-size: 1.3rem;
+      }
+      
+      /* FIXED LOGIN SECTION FOR SMALL MOBILE */
+      .login-section {
+        padding: 25px 20px;
+        width: 95%;
+        margin: 0 auto;
+      }
+      
+      .login-section h3 {
+        font-size: 1.6rem;
+        margin-bottom: 25px;
+      }
+      
+      .input-group {
+        margin-bottom: 20px;
+      }
+      
+      .input-group label {
+        font-size: 1rem;
+      }
+      
+      .input-group input {
+        padding: 12px 15px;
+        font-size: 1rem;
+        width: 100%;
+      }
+      
+      .btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+        width: 100%;
+      }
+      
+      .feature-card, .step, .about-card {
+        padding: 25px 20px;
+      }
+      
+      .feature-card i, .about-card i {
+        font-size: 2.5rem;
+      }
+      
+      .social-links {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .social-link {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* EXTRA FIX FOR VERY SMALL MOBILE DEVICES */
+    @media (max-width: 360px) {
+      .login-section {
+        padding: 20px 15px;
+        width: 98%;
+      }
+      
+      .login-section h3 {
+        font-size: 1.4rem;
+      }
+      
+      .input-group input {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+      }
+      
+      .btn {
+        padding: 12px 15px;
+        font-size: 0.95rem;
       }
     }
   </style>
@@ -908,7 +1011,7 @@
         </div>
       </div>
 
-      <!-- LOGIN SECTION -->
+      <!-- LOGIN SECTION - NOW PROPERLY FITTED ON MOBILE -->
       <section id="login">
         <div class="login-container">
           <div class="login-section">
@@ -1054,6 +1157,34 @@
         }, 500);
       }
     }
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    
+    menuToggle.addEventListener('click', function() {
+      mainNav.classList.toggle('active');
+      menuToggle.classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking on a link
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mainNav.classList.remove('active');
+        menuToggle.classList.remove('active');
+      });
+    });
+
+    // Header scroll effect
+    window.addEventListener('scroll', function() {
+      const header = document.getElementById('main-header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
 
     // Add shake animation to CSS
     const style = document.createElement('style');
