@@ -949,19 +949,19 @@ footer::before {
       </div>
 
       <!-- LOGIN SECTION -->
+<!-- LOGIN SECTION -->
 <section id="login">
   <div class="login-container">
     <div class="login-section">
       <h3>Student Portal</h3>
-<form id="loginForm" onsubmit="return validateLogin()" method="GET" action="/app">
-    <div class="input-group">
+      <div class="input-group">
         <label for="regno"><i class="fas fa-id-card"></i> Register Number</label>
-        <input type="text" id="regno" name="regno" placeholder="Enter your register number" required>
-    </div>
-    <button type="submit" class="btn">
+        <input type="text" id="regno" placeholder="Enter your register number" required>
+      </div>
+      <button type="button" class="btn" onclick="loginToApp()">
         <i class="fas fa-sign-in-alt"></i> Login to App
-    </button>
-</form>
+      </button>
+      <div id="error" class="error-message"></div>
     </div>
   </div>
 </section>
@@ -1055,8 +1055,8 @@ footer::before {
   </div>
 </footer>
 
-  <script>
-  function validateLogin() {
+ <script>
+function loginToApp() {
   const regno = document.getElementById('regno').value.trim().toUpperCase();
   const error = document.getElementById('error');
 
@@ -1070,11 +1070,14 @@ footer::before {
     // Show loading state
     const btn = document.querySelector('.btn');
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Accessing Advisor...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
     btn.disabled = true;
     
-    // Form will automatically submit to /app route
-    return true; // Allow form submission
+    // Simple redirect to app
+    setTimeout(() => {
+      window.location.href = '/app';
+    }, 1000);
+    
   } else {
     error.style.display = "block";
     
@@ -1090,10 +1093,9 @@ footer::before {
     setTimeout(() => {
       input.style.animation = '';
     }, 500);
-    
-    return false; // Prevent form submission
   }
 }
+
 // Add shake animation to CSS
 const style = document.createElement('style');
 style.textContent = `
@@ -1112,6 +1114,14 @@ document.getElementById('regno').addEventListener('input', function(e) {
   e.target.value = value;
 });
 
+// Handle Enter key
+document.getElementById('regno').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    loginToApp();
+  }
+});
+
 // Update examples to show correct format
 const regnoInput = document.getElementById('regno');
 const examples = ['22091A3352', '23091A123', '24091A45678'];
@@ -1121,6 +1131,6 @@ setInterval(() => {
   regnoInput.placeholder = `e.g., ${examples[exampleIndex]}`;
   exampleIndex = (exampleIndex + 1) % examples.length;
 }, 2000);
-  </script> 
+</script>
 </body>
 </html>
