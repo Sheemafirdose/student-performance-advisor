@@ -676,7 +676,6 @@ class EnhancedChatAdvisor:
             {'text': '😌 Mental Health', 'query': 'mental health motivation'},
             {'text': '🌿 Campus Life', 'query': 'campus life balance'}
         ]
-    
     def handle_message(self, session_id, user_message, student_data=None):
         # Initialize conversation if not exists
         if session_id not in self.conversations:
@@ -684,42 +683,74 @@ class EnhancedChatAdvisor:
                 'step': 'greeting',
                 'name': None
             }
-        
+
         conv = self.conversations[session_id]
         user_msg = user_message.strip()
         user_lower = user_msg.lower()
-        
+    
         # ========== CRITICAL: CHECK IF USER HAS DATA ==========
-        if not student_data:
-            # NO DATA - Show message and web options
-            no_data_message = (
-                "👋 Hello! I'm your Academic Advisor.\n\n"
-                "📊 **Please enter your academic details in the form on the left and click 'Analyze Performance' first.**\n\n"
-                "After you get your performance prediction, I can provide:\n"
-                "• Personalized academic analysis\n" 
-                "• Customized study suggestions\n"
-                "• Career guidance based on your profile\n"
-                "• Improvement strategies\n\n"
-                "Once you have your prediction results, try these options:"
-            )
-            
-            # Show quick actions for future use
-            quick_actions = self.get_quick_actions()
-            actions_text = "\n".join([f"• {action['text']}" for action in quick_actions])
-            
-            return f"{no_data_message}\n{actions_text}"
+        has_student_data = student_data and isinstance(student_data, dict) and 'total_cgpa' in student_data
+    
+        if not has_student_data:
+            # NO DATA - Show message to fill form first
+            if conv['step'] == 'greeting':
+               conv['step'] = 'get_name'
+               return "👋 Hello! I'm your AI Academic Advisor. To get started, please fill out the form on the left side and click 'Analyze Performance' to get your predictions first. Then I can provide personalized suggestions! What's your name?"
         
-        # ========== USER HAS DATA - NORMAL FLOW ==========
-        # Handle goodbye messages
+            elif conv['step'] == 'get_name':
+               if len(user_msg) < 2:
+                   return "Please enter a valid name:"
+               conv['name'] = user_msg
+               conv['step'] = 'show_options'
+               return f"Nice to meet you, {conv['name']}! 📊 **Important:** Please fill out the form on the left side first and click 'Analyze Performance' to get your predictions. Once you have your results, I can provide personalized academic suggestions! For now, I can help with general study advice. What would you like to know?"
+
+            elif conv['step'] == 'show_options':
+                 # No data available - guide user to fill form
+                if any(word in user_lower for word in ['form', 'fill', 'data', 'predict', 'analysis']):
+                    return f"📝 **Form Instructions:**\n1. Fill all fields in the form on the left\n2. Click 'Analyze Performance' button\n3. Get your prediction results\n4. Then I can provide personalized suggestions!\n\nWhat specific field do you need help understanding, {conv['name']}?"
+                elif any(word in user_lower for word in ['cgpa', 'gpa', 'grade']):
+                    return "📊 **CGPA Explanation:** Your Cumulative Grade Point Average (0-10 scale) shows your overall academic performance. Higher CGPA (8.0+) indicates strong academic foundation."
+                elif any(word in user_lower for word in ['attendance']):
+                    return "📅 **Attendance:** Regular attendance (85%+) ensures you don't miss important concepts and maintains good faculty rapport."
+                elif any(word in user_lower for word in ['study', 'hours']):
+                    return "⏰ **Study Hours:** Weekly study time. 25+ hours is optimal for good academic performance."
+                elif any(word in user_lower for word in ['backlog', 'arrear']):
+                    return "🔧 **Backlogs:** Number of subjects pending clearance. Zero backlogs is ideal for academic progress."
+                elif any(word in user_lower for word in ['competition', 'project', 'internship']):
+                    return "🚀 **Competitions/Projects:** Participation shows practical skills and initiative. Valuable for placements and higher studies."
+                elif any(word in user_lower for word in ['confidence']):
+                    return "💪 **Confidence Level:** Self-assessment of your academic confidence (1-10). Higher confidence often correlates with better performance."
+                else:
+                    return f"📋 **Next Steps:** Please fill the form on the left first, {conv['name']}! Here's what to do:\n1. Complete all form fields\n2. Click 'Analyze Performance'\n3. Get your prediction results\n4. Then I can give personalized advice!\n\nNeed help understanding any specific form field?"
+        
+            else:
+                # Handle general queries without data
+                if any(word in user_lower for word in ['hi', 'hello', 'hey']):
+                    return f"Hello again {conv['name']}! Remember to fill the form first to get personalized advice. How can I help?"
+                elif any(word in user_lower for word in ['thanks', 'thank you']):
+                    return f"You're welcome {conv['name']}! Good luck with your studies! 🎓"
+                elif any(word in user_lower for word in ['help', 'suggestion', 'advice']):
+                    return f"📊 **First Step Needed:** Please fill out the form on the left side and click 'Analyze Performance' to get your predictions. Then I can provide personalized academic suggestions! What specific help do you need with the form, {conv['name']}?"
+                elif any(word in user_lower for word in ['study', 'technique', 'time management']):
+                    return "📚 **General Study Tips**:\n• Use Pomodoro technique (25min study, 5min break)\n• Create consistent study schedule\n• Practice active recall instead of passive reading\n• Get enough sleep and take regular breaks!\n\n💡 **For personalized tips:** Fill the form first to get customized advice!"
+                elif any(word in user_lower for word in ['exam', 'preparation']):
+                    return "📖 **Exam Preparation**:\n• Start revising early\n• Practice with past papers\n• Create summary notes\n• Stay calm and get enough rest!\n\n💡 **For personalized strategy:** Complete the form to get customized exam plan!"
+                elif any(word in user_lower for word in ['motivation', 'stress']):
+                    return "😊 **Mental Health Tips**:\n• Take regular breaks\n• Exercise regularly\n• Talk to friends/family\n• Set small achievable goals\n• Remember why you started!\n\n💡 **For customized support:** Fill the form for personalized advice!"
+                else:
+                    return f"📋 **Action Required:** Please fill the form first to unlock personalized advice, {conv['name']}! I can help explain any form field:\n• CGPA & Attendance\n• Study Hours & Backlogs\n• Competitions & Projects\n• Confidence Level\nWhich field would you like me to explain?"
+
+             # ========== USER HAS DATA - NORMAL FLOW ==========
+             # Handle goodbye messages
         if any(word in user_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end chat']):
             name = conv.get('name', 'Student')
             return f"Goodbye {name}! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓"
-        
-        # Handle summary request
+    
+          # Handle summary request
         if any(word in user_lower for word in ['summary', 'my details', 'my profile', 'table', 'overview']):
             name = conv.get('name', 'Student')
             return self.generate_personalized_summary(student_data, name)
-        
+    
         # Check for category-specific queries
         category_responses = {
             'academic performance analysis': self.get_category_response('academic performance analysis'),
@@ -728,46 +759,46 @@ class EnhancedChatAdvisor:
             'career guidance placements': self.get_category_response('career guidance placements'),
             'mental health motivation': self.get_category_response('mental health motivation'),
             'campus life balance': self.get_category_response('campus life balance')
-        }
-        
+       }
+    
         for category, response in category_responses.items():
             if any(word in user_lower for word in category.split()):
                 return response
-        
+    
         # NORMAL CONVERSATION FLOW (user has data)
         if conv['step'] == 'greeting':
             conv['step'] = 'get_name'
-            return "Hello! I'm your academic advisor. What's your name?"
-        
+            return "Hello! I'm your academic advisor. I see you have your academic data ready! What's your name?"
+    
         elif conv['step'] == 'get_name':
             if len(user_msg) < 2:
                 return "Please enter a valid name:"
             conv['name'] = user_msg
-            conv['step'] = 'show_suggestions'
-            return f"Nice to meet you, {conv['name']}! I can analyze your academic data and provide personalized suggestions. Would you like me to do that? (yes/no)"
-        
-        elif conv['step'] == 'show_suggestions':
+            conv['step'] = 'show_options'
+            return f"Nice to meet you, {conv['name']}! ✅ I can see your academic data is ready. Would you like me to provide personalized suggestions based on your performance analysis? (yes/no)"
+    
+        elif conv['step'] == 'show_options':
             if any(word in user_lower for word in ['yes', 'yeah', 'sure', 'ok', 'yep']):
                 # Generate personalized advice (same as Get Suggestion button)
                 advice = advisor_model.generate_advice(student_data, student_data.get('predicted_class', 'Average'))
                 conv['step'] = 'completed'
-                return f"Great! Here are my personalized suggestions for you, {conv['name']}:\n\n{advice}"
+                return f"Great! Here are my personalized suggestions for you, {conv['name']}:\n\n{advice}\n\n💡 **Tip:** You can also use the 'Get Suggestions' button for quick recommendations!"
             elif any(word in user_lower for word in ['no', 'not', 'nope', 'later']):
                 conv['step'] = 'completed'
-                return f"No problem {conv['name']}! Feel free to ask anytime you need academic advice."
+                return f"No problem {conv['name']}! Feel free to ask me about general study tips anytime, or use the 'Get Suggestions' button when you're ready."
             else:
-                return "Please answer with 'yes' or 'no'. Would you like personalized academic suggestions?"
-        
+                return "Please answer with 'yes' or 'no'. Would you like personalized academic suggestions based on your data?"
+    
         elif conv['step'] == 'completed':
             # Handle normal conversation after completion
             if any(word in user_lower for word in ['hi', 'hello', 'hey']):
-                return f"Hello again {conv['name']}! How can I help you today?"
+                return f"Hello again {conv['name']}! Your academic data is ready. Would you like personalized suggestions?"
             elif any(word in user_lower for word in ['thanks', 'thank you']):
                 return f"You're welcome {conv['name']}! Good luck with your studies! 🎓"
             elif any(word in user_lower for word in ['help', 'suggestion', 'advice']):
-                return f"I can help with study techniques, time management, and academic planning. What specifically do you need, {conv['name']}?"
+                return f"I can provide personalized suggestions based on your academic data, {conv['name']}. Would you like me to analyze your performance? (Or use the 'Get Suggestions' button for quick recommendations!)"
             else:
-                # Search knowledge base for academic queries
+            # Search knowledge base for academic queries
                 results = help_system.search_knowledge(user_msg)
                 if results:
                     response = f"Here's what I found about '{user_msg}':\n\n"
@@ -776,10 +807,11 @@ class EnhancedChatAdvisor:
                         response += f"{result['content']}\n\n"
                     return response
                 else:
-                    return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
-        
+                    return f"I'm here to help with academic suggestions, {conv['name']}! You can ask about study tips or use the 'Get Suggestions' button for detailed analysis based on your data!"
+    
         else:
-            return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
+            return f"I'm here to help with academic suggestions, {conv['name']}! You can ask about study tips or use the 'Get Suggestions' button for detailed analysis based on your data!"
+    
 
 # Replace the existing chat advisor with the fixed version
 chat_advisor = EnhancedChatAdvisor()
