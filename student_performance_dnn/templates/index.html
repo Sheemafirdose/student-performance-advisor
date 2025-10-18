@@ -36,7 +36,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-             position: relative; /* ADD THIS LINE */
+            position: relative;
         }
 
         .main-container {
@@ -304,7 +304,7 @@
             text-align: center;
             color: var(--gray);
             padding: 50px 30px;
-            display: block !important;  /* ADD THIS LINE */
+            display: block !important;
         }
 
         .placeholder-message i {
@@ -385,95 +385,96 @@
                 flex-direction: column;
             }
         }
-        /* Chatbot Icon Styles - ADD THIS TO YOUR CSS */
-.chatbot-icon {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
-    animation: pulse 2s infinite;
-}
 
-.chatbot-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0 12px 30px rgba(67, 97, 238, 0.6);
-}
+        /* Chatbot Icon Styles */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
 
-.chatbot-icon i {
-    font-size: 28px;
-    color: white;
-}
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(67, 97, 238, 0.6);
+        }
 
-.chatbot-notification {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 20px;
-    height: 20px;
-    background: #ff4757;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: white;
-    font-weight: bold;
-    animation: bounce 1s infinite alternate;
-}
+        .chatbot-icon i {
+            font-size: 28px;
+            color: white;
+        }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 15px rgba(67, 97, 238, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(67, 97, 238, 0);
-    }
-}
+        .chatbot-notification {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ff4757;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+            animation: bounce 1s infinite alternate;
+        }
 
-@keyframes bounce {
-    from {
-        transform: translateY(0);
-    }
-    to {
-        transform: translateY(-5px);
-    }
-}
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(67, 97, 238, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(67, 97, 238, 0);
+            }
+        }
 
-@media (max-width: 968px) {
-    .chatbot-icon {
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-    }
+        @keyframes bounce {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-5px);
+            }
+        }
 
-    .chatbot-icon i {
-        font-size: 24px;
-    }
-}
+        @media (max-width: 968px) {
+            .chatbot-icon {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+            }
+
+            .chatbot-icon i {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <!-- ADD THIS CHATBOT ICON RIGHT AFTER BODY TAG -->
-<!-- Chatbot Icon - Always Visible -->
-<div class="chatbot-icon" onclick="startStaticChat()">
-    <i class="fas fa-robot"></i>
-    <div class="chatbot-notification">!</div>
-</div>
+        <!-- Chatbot Icon -->
+        <div class="chatbot-icon" onclick="startStaticChat()">
+            <i class="fas fa-robot"></i>
+            <div class="chatbot-notification">!</div>
+        </div>
+        
         <!-- LEFT SIDE: Input Form -->
         <div class="input-section">
             <div class="form-header">
@@ -551,7 +552,7 @@
                                     <option value="">Select participation status</option>
                                     <option value="Yes">Yes</option>
                                     <option value="No">No</option>
-                                     <option value="More than 2">More than 2</option>
+                                    <option value="More than 2">More than 2</option>
                                 </select>
                             </div>
                             <div class="help-text">Participation in academic competitions</div>
@@ -565,7 +566,7 @@
                                     <option value="">Select experience status</option>
                                     <option value="Yes">Yes</option>
                                     <option value="No">No</option>
-                                     <option value="More than 2">More than 2</option>
+                                    <option value="More than 2">More than 2</option>
                                 </select>
                             </div>
                             <div class="help-text">Completion of projects or internships</div>
@@ -597,11 +598,9 @@
                         <button type="submit" class="btn" id="analyze-btn">
                             <i class="fas fa-chart-bar"></i> Analyze Performance
                         </button>
-                        {% if prediction_text or error_text %}
-                        <button type="button" class="btn btn-secondary" id="retry-btn">
-                            <i class="fas fa-redo"></i> Try Again
+                        <button type="button" class="btn btn-secondary" id="retry-btn-left" style="display: none;">
+                            <i class="fas fa-redo"></i> Try Again (Keep Data)
                         </button>
-                        {% endif %}
                     </div>
                 </form>
                 
@@ -614,511 +613,492 @@
         <!-- RIGHT SIDE: Prediction Results -->
         <div class="result-section">
             <div class="prediction-panel">
-                {% if prediction_text %}
-                <div class="result-container show 
-                    {% if 'Below Average' in prediction_text %}result-needs-improvement
-                    {% elif 'Average' in prediction_text %}result-average
-                    {% elif 'Good' in prediction_text %}result-good
-                    {% elif 'Excellent' in prediction_text %}result-top
-                    {% endif %}">
-                    <div class="result-emoji">
-                        {% if 'Below Average' in prediction_text %}😟
-                        {% elif 'Average' in prediction_text %}🙂
-                        {% elif 'Good' in prediction_text %}😃
-                        {% elif 'Excellent' in prediction_text %}🚀
-                        {% endif %}
-                    </div>
-                    <div class="result-title">{{ prediction_text }}</div>
-                    
-                    {% if confidence_score %}
-                    <div class="confidence-score">
-                        <i class="fas fa-shield-alt"></i> Confidence: <strong>{{ "%.1f"|format(confidence_score) }}%</strong>
-                    </div>
-                    {% endif %}
-                    
-                    {% if probabilities %}
-                    <div class="probability-chart">
-                        <div class="probability-item below-avg">
-                            <div class="probability-label">Below Average</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Below Average']) }}%</div>
-                        </div>
-                        <div class="probability-item average">
-                            <div class="probability-label">Average</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Average']) }}%</div>
-                        </div>
-                        <div class="probability-item good">
-                            <div class="probability-label">Good</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Good']) }}%</div>
-                        </div>
-                        <div class="probability-item excellent">
-                            <div class="probability-label">Excellent</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Excellent']) }}%</div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- SUGGESTIONS BOX MOVED INSIDE THE PREDICTION PANEL -->
-                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
-                        <button onclick="startSuggestionChat()" 
-                                style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-                                       color: white; 
-                                       border: none; 
-                                       padding: 15px 30px; 
-                                       border-radius: 25px; 
-                                       cursor: pointer;
-                                       font-size: 16px;
-                                       font-weight: bold;
-                                       box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-                                       transition: all 0.3s ease;">
-                            💬 Get Interactive Suggestions
-                        </button>
-                        <p style="margin-top: 10px; color: #6c757d; font-size: 14px;">
-                            Chat with our AI advisor for personalized academic guidance
-                        </p>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button type="button" class="btn btn-secondary" id="retry-btn-2">
-                            <i class="fas fa-redo"></i> Try Again
-                        </button>
-                    </div>
-                </div>
-                {% elif error_text %}
-                <div class="result-container show result-error">
-                    <div class="result-emoji">⚠️</div>
-                    <div class="result-title">{{ error_text }}</div>
-                    <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
-                        Please check that all fields are filled correctly and try again.
-                    </p>
-                    
-                </div>
-                {% else %}
-                <div class="placeholder-message">
+                <div class="placeholder-message" id="placeholder-message">
                     <i class="fas fa-chart-line"></i>
                     <h3>Awaiting Analysis</h3>
                     <p>Fill out the form on the left and click "Analyze Performance" to see your prediction results here.</p>
                 </div>
-                {% endif %}
+                
+                <div class="result-container" id="result-container">
+                    <!-- Results will be dynamically inserted here -->
+                </div>
             </div>
         </div>
     </div>
 
-<!-- Chat Modal -->
-<div id="chatModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-                          width: 90%; max-width: 500px; background: white; border-radius: 15px; 
-                          box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 1000; max-height: 80vh;">
-    <!-- Chat Header -->
-    <div style="background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; padding: 20px; 
-                border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0; font-size: 1.2rem;">🎓 Academic Advisor</h3>
-        <button onclick="closeChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
-    </div>
-    
-    <!-- Chat Messages -->
-    <div id="chatMessages" style="height: 300px; overflow-y: auto; padding: 20px; background: #f8f9fa; 
-                                 border-bottom: 1px solid #dee2e6;"></div>
-    
-    <!-- Chat Input -->
-    <div style="padding: 20px; background: white; border-radius: 0 0 15px 15px;">
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <input type="text" id="chatInput" placeholder="Type your message..." 
-                   style="flex: 1; padding: 12px; border: 2px solid #e9ecef; border-radius: 25px; 
-                          outline: none; font-family: 'Poppins', sans-serif;"
-                   onkeypress="if(event.key === 'Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" 
-                    style="background: #4361ee; color: white; border: none; padding: 12px 20px; 
-                           border-radius: 25px; cursor: pointer; font-family: 'Poppins', sans-serif;">
-                Send
+    <!-- Chat Modal -->
+    <div id="chatModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                              width: 90%; max-width: 500px; background: white; border-radius: 15px; 
+                              box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 1000; max-height: 80vh;">
+        <!-- Chat Header -->
+        <div style="background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; padding: 20px; 
+                    border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">🎓 Academic Advisor</h3>
+            <button onclick="closeChat()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="chatMessages" style="height: 300px; overflow-y: auto; padding: 20px; background: #f8f9fa; 
+                                     border-bottom: 1px solid #dee2e6;"></div>
+        
+        <!-- Chat Input -->
+        <div style="padding: 20px; background: white; border-radius: 0 0 15px 15px;">
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" id="chatInput" placeholder="Type your message..." 
+                       style="flex: 1; padding: 12px; border: 2px solid #e9ecef; border-radius: 25px; 
+                              outline: none; font-family: 'Poppins', sans-serif;"
+                       onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()" 
+                        style="background: #4361ee; color: white; border: none; padding: 12px 20px; 
+                               border-radius: 25px; cursor: pointer; font-family: 'Poppins', sans-serif;">
+                    Send
+                </button>
+            </div>
+            <button onclick="resetChat()" 
+                    style="background: #6c757d; color: white; border: none; padding: 8px 15px; 
+                           border-radius: 15px; cursor: pointer; font-size: 12px; font-family: 'Poppins', sans-serif;">
+                Reset Chat
             </button>
         </div>
-        <button onclick="resetChat()" 
-                style="background: #6c757d; color: white; border: none; padding: 8px 15px; 
-                       border-radius: 15px; cursor: pointer; font-size: 12px; font-family: 'Poppins', sans-serif;">
-            Reset Chat
-        </button>
     </div>
-</div>
 
-<!-- Overlay -->
-<div id="chatOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-                            background: rgba(0,0,0,0.5); z-index: 999;"></div>
-
+    <!-- Overlay -->
+    <div id="chatOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                                background: rgba(0,0,0,0.5); z-index: 999;"></div>
 
     <script>
-        // Real-time validation
-        document.querySelectorAll('input[type="number"]').forEach(input => {
-            input.addEventListener('input', function() {
-                const value = parseFloat(this.value);
-                const min = parseFloat(this.min);
-                const max = parseFloat(this.max);
-                
-                if (value < min || value > max || isNaN(value)) {
-                    this.style.borderColor = '#f44336';
-                    this.style.boxShadow = '0 0 0 3px rgba(244, 67, 54, 0.1)';
-                } else {
-                    this.style.borderColor = '#4caf50';
-                    this.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
-                }
+        // Store form data for persistence
+        let formData = {};
+        
+        // Initialize form data from localStorage if available
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear everything on browser refresh
+            localStorage.removeItem('studentFormData');
+            localStorage.removeItem('studentResults');
+            
+            // Setup form submission
+            document.getElementById('prediction-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveFormData();
+                submitForm();
+            });
+            
+            // Setup LEFT SIDE retry button (keeps data, only clears results)
+            document.getElementById('retry-btn-left').addEventListener('click', function() {
+                resetResultsOnly();
+            });
+            
+            // Real-time validation
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    validateNumberInput(this);
+                });
             });
         });
 
-        // Form submission enhancement
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const submitBtn = this.querySelector('button[type="submit"]');
+        // Save form data to localStorage
+        function saveFormData() {
+            const form = document.getElementById('prediction-form');
+            const formElements = form.elements;
+            
+            formData = {};
+            for (let element of formElements) {
+                if (element.name && element.value) {
+                    formData[element.name] = element.value;
+                }
+            }
+            
+            localStorage.setItem('studentFormData', JSON.stringify(formData));
+        }
+
+        // LEFT SIDE: Reset only results (keep form data)
+        function resetResultsOnly() {
+            localStorage.removeItem('studentResults');
+            resetResults();
+        }
+
+        // RIGHT SIDE: Reset only the right side to initial state
+        function resetRightSideOnly() {
+            localStorage.removeItem('studentResults');
+            resetResults();
+        }
+
+        // Reset only results display
+        function resetResults() {
+            document.getElementById('placeholder-message').style.display = 'block';
+            document.getElementById('result-container').classList.remove('show');
+            document.getElementById('result-container').innerHTML = '';
+        }
+
+        // Validate number inputs
+        function validateNumberInput(input) {
+            const value = parseFloat(input.value);
+            const min = parseFloat(input.min);
+            const max = parseFloat(input.max);
+            
+            if (value < min || value > max || isNaN(value)) {
+                input.style.borderColor = '#f44336';
+                input.style.boxShadow = '0 0 0 3px rgba(244, 67, 54, 0.1)';
+            } else {
+                input.style.borderColor = '#4caf50';
+                input.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+            }
+        }
+
+        // Form submission
+        function submitForm() {
+            const submitBtn = document.getElementById('analyze-btn');
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing Performance...';
             submitBtn.disabled = true;
             
-            // Re-enable button after 5 seconds in case of error
+            // Simulate form submission (replace with actual AJAX call)
             setTimeout(() => {
+                // This is where you would make your actual API call
+                const predictionText = "Good Performance";
+                const confidenceScore = 85.5;
+                const probabilities = {
+                    'Below Average': 5.2,
+                    'Average': 24.8,
+                    'Good': 45.3,
+                    'Excellent': 24.7
+                };
+                
+                // Save results to localStorage
+                const results = {
+                    predictionText: predictionText,
+                    confidenceScore: confidenceScore,
+                    probabilities: probabilities
+                };
+                localStorage.setItem('studentResults', JSON.stringify(results));
+                
+                displayResults(predictionText, confidenceScore, probabilities);
+                
                 submitBtn.innerHTML = '<i class="fas fa-chart-bar"></i> Analyze Performance';
                 submitBtn.disabled = false;
-            }, 5000);
-        });
-
-        // Add input animations
-        document.querySelectorAll('input, select').forEach(element => {
-            element.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
-            });
-            
-            element.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'translateY(0)';
-            });
-        });
-
-                // Retry button functionality
-        // Retry button functionality - DIFFERENT BEHAVIOR FOR LEFT vs RIGHT
-document.addEventListener('DOMContentLoaded', function() {
-    // LEFT SIDE "Try Again" - Clear everything (only shows when there's prediction/error)
-    const leftRetryBtn = document.getElementById('retry-btn');
-    if (leftRetryBtn) {
-        leftRetryBtn.addEventListener('click', function() {
-            // Reset form completely
-            document.getElementById('prediction-form').reset();
-            
-            // Reset input borders
-            document.querySelectorAll('input[type="number"]').forEach(input => {
-                input.style.borderColor = '#e9ecef';
-                input.style.boxShadow = 'none';
-            });
-            
-            // Reload page to clear predictions and go back to fresh state
-            location.reload();
-        });
-    }
-    
-    // RIGHT SIDE "Try Again" buttons - Keep data, clear only predictions
-    const rightRetryBtns = document.querySelectorAll('#retry-btn-2, #retry-btn-3');
-    rightRetryBtns.forEach(button => {
-        button.addEventListener('click', function() {
-            // Just hide the prediction results, keep form data
-            const resultContainer = document.querySelector('.result-container.show');
-            if (resultContainer) {
-                resultContainer.classList.remove('show');
-                resultContainer.style.display = 'none';
-            }
-            
-            // Show the placeholder message again
-            const placeholder = document.querySelector('.placeholder-message');
-            if (placeholder) {
-                placeholder.style.display = 'block';
-            }
-            
-            // Remove the right side retry buttons (they'll come back on new prediction)
-            rightRetryBtns.forEach(btn => btn.style.display = 'none');
-        });
-    });
-});
-        // ===== ADD THE NEW FUNCTION HERE =====
-// Function for static chatbot icon
-// Function for static chatbot icon - UPDATED
-function startStaticChat() {
-    document.getElementById('chatModal').style.display = 'block';
-    document.getElementById('chatOverlay').style.display = 'block';
-    document.getElementById('chatMessages').innerHTML = '';
-    
-    // Check if user has submitted form data (has prediction results)
-    const hasPrediction = document.querySelector('.result-container.show') !== null;
-    
-    if (!hasPrediction) {
-        // User hasn't entered details yet - send empty message to trigger the backend check
-        fetch('/start_chat', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({session_id: currentSessionId})
-        })
-        .then(response => response.json())
-        .then(data => {
-            addChatMessage(data.response, 'advisor');
-            // DON'T show quick actions for users without data
-        });
-    } else {
-        // User has data - start normal chat with quick actions
-        startSuggestionChat();
-    }
-}
-    </script>
-    <script>
-let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
-function startSuggestionChat() {
-    document.getElementById('chatModal').style.display = 'block';
-    document.getElementById('chatOverlay').style.display = 'block';
-    document.getElementById('chatMessages').innerHTML = '';
-    
-    // Check if user has submitted form data
-    const hasPrediction = document.querySelector('.result-container.show') !== null;
-    
-    if (!hasPrediction) {
-        addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form and get your performance prediction first. Then I can provide personalized suggestions!", 'advisor');
-        return; // STOP HERE - don't proceed to normal chat flow
-    }
-    
-    // Only continue if user has data
-    fetch('/start_chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({session_id: currentSessionId})
-    })
-    .then(response => response.json())
-    .then(data => {
-        addChatMessage(data.response, 'advisor');
-        // Show quick actions only if user has data
-        setTimeout(addQuickActions, 100);
-    });
-}
-
-function closeChat() {
-    document.getElementById('chatModal').style.display = 'none';
-    document.getElementById('chatOverlay').style.display = 'none';
-}
-
-function sendChatMessage() {
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    
-    if (!message) return;
-    
-    // Check if user wants to end chat
-    if (message.toLowerCase() === 'bye' || message.toLowerCase() === 'goodbye' || message.toLowerCase() === 'exit') {
-        addChatMessage('You: ' + message, 'user');
-        input.value = '';
-        addChatMessage('Goodbye! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓', 'advisor');
-        setTimeout(() => {
-            closeChat();
-        }, 2000);
-        return;
-    }
-    
-    // Add user message
-    addChatMessage('You: ' + message, 'user');
-    input.value = '';
-    
-    // Send to server
-    fetch('/send_message', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            session_id: currentSessionId,
-            message: message
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        addChatMessage(data.response, 'advisor');
-        
-        // ALWAYS show options after every advisor response
-        setTimeout(addQuickActions, 100);
-    });
-}
-
-function resetChat() {
-    fetch('/reset_chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({session_id: currentSessionId})
-    })
-    .then(() => {
-        document.getElementById('chatMessages').innerHTML = '';
-        startSuggestionChat();
-    });
-}
-
-function addChatMessage(text, sender) {
-    const messagesDiv = document.getElementById('chatMessages');
-    const messageDiv = document.createElement('div');
-    
-    messageDiv.style.margin = '10px 0';
-    messageDiv.style.padding = '12px 16px';
-    messageDiv.style.borderRadius = '18px';
-    messageDiv.style.maxWidth = '85%';
-    messageDiv.style.wordWrap = 'break-word';
-    messageDiv.style.fontSize = '14px';
-    messageDiv.style.lineHeight = '1.4';
-    
-    if (sender === 'user') {
-        messageDiv.style.background = '#4361ee';
-        messageDiv.style.color = 'white';
-        messageDiv.style.marginLeft = 'auto';
-        messageDiv.style.borderBottomRightRadius = '5px';
-    } else {
-        messageDiv.style.background = 'white';
-        messageDiv.style.color = '#333';
-        messageDiv.style.border = '1px solid #dee2e6';
-        messageDiv.style.marginRight = 'auto';
-        messageDiv.style.borderBottomLeftRadius = '5px';
-    }
-    
-    // Format text with line breaks and basic formatting
-    let formattedText = text
-        .replace(/\n/g, '<br>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
-    messageDiv.innerHTML = formattedText;
-    messagesDiv.appendChild(messageDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-// Quick action buttons (WITH BYE OPTION)
-function addQuickActions() {
-    const messagesDiv = document.getElementById('chatMessages');
-    
-    // Remove existing quick actions if any
-    const existingActions = messagesDiv.querySelector('.quick-actions');
-    if (existingActions) {
-        existingActions.remove();
-    }
-    
-    const actionsDiv = document.createElement('div');
-    actionsDiv.className = 'quick-actions';
-    actionsDiv.style.margin = '15px 0';
-    actionsDiv.style.textAlign = 'center';
-    actionsDiv.style.padding = '15px';
-    actionsDiv.style.background = '#f8f9fa';
-    actionsDiv.style.borderRadius = '10px';
-    actionsDiv.style.border = '1px solid #e9ecef';
-    
-    const title = document.createElement('div');
-    title.textContent = '💡 Quick Help Options - Click Any:';
-    title.style.fontWeight = 'bold';
-    title.style.marginBottom = '10px';
-    title.style.color = '#4361ee';
-    actionsDiv.appendChild(title);
-    
-    const quickTopics = [
-        {'text': '📋 Get My Summary', 'query': 'summary'},
-        {'text': '📊 Academic Analysis', 'query': 'academic performance analysis'},
-        {'text': '🎯 Study Techniques', 'query': 'study techniques time management'},
-        {'text': '📖 Exam Preparation', 'query': 'exam preparation strategies'},
-        {'text': '💼 Career Guidance', 'query': 'career guidance placements'},
-        {'text': '😌 Mental Health', 'query': 'mental health motivation'},
-        {'text': '🌿 Campus Life', 'query': 'campus life balance'},
-        {'text': '👋 End Chat', 'query': 'bye', 'isBye': true}
-    ];
-    
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.style.display = 'flex';
-    buttonsContainer.style.flexWrap = 'wrap';
-    buttonsContainer.style.justifyContent = 'center';
-    buttonsContainer.style.gap = '8px';
-    
-    quickTopics.forEach(topic => {
-        const btn = document.createElement('button');
-        btn.textContent = topic.text;
-        btn.style.background = 'white';
-        btn.style.border = '2px solid #4361ee';
-        btn.style.borderRadius = '20px';
-        btn.style.padding = '10px 15px';
-        btn.style.fontSize = '12px';
-        btn.style.cursor = 'pointer';
-        btn.style.transition = 'all 0.3s ease';
-        btn.style.fontWeight = '500';
-        btn.style.color = '#4361ee';
-        btn.style.flex = '1';
-        btn.style.minWidth = '140px';
-        btn.style.maxWidth = '180px';
-        
-        // Highlight the Summary option
-        if (topic.text.includes('Summary')) {
-            btn.style.background = '#4361ee';
-            btn.style.color = 'white';
-            btn.style.border = '2px solid #3a56d4';
-            btn.style.fontWeight = '600';
+                document.getElementById('retry-btn-left').style.display = 'block';
+            }, 2000);
         }
-        
-        // Style the Bye option differently
-        if (topic.isBye) {
-            btn.style.background = '#6c757d';
-            btn.style.color = 'white';
-            btn.style.border = '2px solid #495057';
-            btn.style.fontWeight = '600';
-        }
-        
-        btn.onmouseover = () => {
-            if (topic.isBye) {
-                btn.style.background = '#495057';
-                btn.style.color = 'white';
-            } else {
-                btn.style.background = '#4361ee';
-                btn.style.color = 'white';
+
+        // Display results in the right panel
+        function displayResults(predictionText, confidenceScore, probabilities) {
+            const resultContainer = document.getElementById('result-container');
+            const placeholder = document.getElementById('placeholder-message');
+            
+            // Hide placeholder
+            placeholder.style.display = 'none';
+            
+            // Determine result class based on prediction
+            let resultClass = '';
+            let emoji = '';
+            
+            if (predictionText.includes('Below Average')) {
+                resultClass = 'result-needs-improvement';
+                emoji = '😟';
+            } else if (predictionText.includes('Average')) {
+                resultClass = 'result-average';
+                emoji = '🙂';
+            } else if (predictionText.includes('Good')) {
+                resultClass = 'result-good';
+                emoji = '😃';
+            } else if (predictionText.includes('Excellent')) {
+                resultClass = 'result-top';
+                emoji = '🚀';
             }
-            btn.style.transform = 'translateY(-2px)';
-            btn.style.boxShadow = '0 4px 8px rgba(67, 97, 238, 0.3)';
-        };
-        btn.onmouseout = () => {
-            if (topic.text.includes('Summary')) {
-                btn.style.background = '#4361ee';
-                btn.style.color = 'white';
-            } else if (topic.isBye) {
-                btn.style.background = '#6c757d';
-                btn.style.color = 'white';
+            
+            // Build results HTML
+            resultContainer.innerHTML = `
+                <div class="result-emoji">${emoji}</div>
+                <div class="result-title">${predictionText}</div>
+                
+                <div class="confidence-score">
+                    <i class="fas fa-shield-alt"></i> Confidence: <strong>${confidenceScore.toFixed(1)}%</strong>
+                </div>
+                
+                <div class="probability-chart">
+                    <div class="probability-item below-avg">
+                        <div class="probability-label">Below Average</div>
+                        <div class="probability-value">${probabilities['Below Average'].toFixed(1)}%</div>
+                    </div>
+                    <div class="probability-item average">
+                        <div class="probability-label">Average</div>
+                        <div class="probability-value">${probabilities['Average'].toFixed(1)}%</div>
+                    </div>
+                    <div class="probability-item good">
+                        <div class="probability-label">Good</div>
+                        <div class="probability-value">${probabilities['Good'].toFixed(1)}%</div>
+                    </div>
+                    <div class="probability-item excellent">
+                        <div class="probability-label">Excellent</div>
+                        <div class="probability-value">${probabilities['Excellent'].toFixed(1)}%</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
+                    <button onclick="startSuggestionChat()" 
+                            style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+                                   color: white; 
+                                   border: none; 
+                                   padding: 15px 30px; 
+                                   border-radius: 25px; 
+                                   cursor: pointer;
+                                   font-size: 16px;
+                                   font-weight: bold;
+                                   box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                                   transition: all 0.3s ease;">
+                        💬 Get Interactive Suggestions
+                    </button>
+                    <p style="margin-top: 10px; color: #6c757d; font-size: 14px;">
+                        Chat with our AI advisor for personalized academic guidance
+                    </p>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="resetRightSideOnly()">
+                        <i class="fas fa-redo"></i> Try Again (Refresh Right Side)
+                    </button>
+                </div>
+            `;
+            
+            // Add the result class and show
+            resultContainer.className = `result-container show ${resultClass}`;
+        }
+
+        // Chat functionality
+        let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+        
+        function startStaticChat() {
+            document.getElementById('chatModal').style.display = 'block';
+            document.getElementById('chatOverlay').style.display = 'block';
+            document.getElementById('chatMessages').innerHTML = '';
+            
+            const hasPrediction = document.querySelector('.result-container.show') !== null;
+            
+            if (!hasPrediction) {
+                addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form and get your performance prediction first. Then I can provide personalized suggestions!", 'advisor');
             } else {
+                startSuggestionChat();
+            }
+        }
+
+        function startSuggestionChat() {
+            document.getElementById('chatModal').style.display = 'block';
+            document.getElementById('chatOverlay').style.display = 'block';
+            document.getElementById('chatMessages').innerHTML = '';
+            
+            const hasPrediction = document.querySelector('.result-container.show') !== null;
+            
+            if (!hasPrediction) {
+                addChatMessage("Hello! I'm your academic advisor. 👋\n\nPlease fill out the form and get your performance prediction first. Then I can provide personalized suggestions!", 'advisor');
+                return;
+            }
+            
+            // Simulate API call
+            setTimeout(() => {
+                addChatMessage("Hello! I'm your AI Academic Advisor. I can see your performance prediction and I'm here to help you improve! What specific area would you like guidance on?", 'advisor');
+                setTimeout(addQuickActions, 100);
+            }, 500);
+        }
+
+        function closeChat() {
+            document.getElementById('chatModal').style.display = 'none';
+            document.getElementById('chatOverlay').style.display = 'none';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            if (message.toLowerCase() === 'bye' || message.toLowerCase() === 'goodbye' || message.toLowerCase() === 'exit') {
+                addChatMessage('You: ' + message, 'user');
+                input.value = '';
+                addChatMessage('Goodbye! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓', 'advisor');
+                setTimeout(() => {
+                    closeChat();
+                }, 2000);
+                return;
+            }
+            
+            addChatMessage('You: ' + message, 'user');
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                addChatMessage("I understand you're asking about: " + message + ". Based on your academic profile, I recommend focusing on consistent study habits and regular revision. Would you like more specific advice?", 'advisor');
+                setTimeout(addQuickActions, 100);
+            }, 1000);
+        }
+
+        function resetChat() {
+            document.getElementById('chatMessages').innerHTML = '';
+            startSuggestionChat();
+        }
+
+        function addChatMessage(text, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.style.margin = '10px 0';
+            messageDiv.style.padding = '12px 16px';
+            messageDiv.style.borderRadius = '18px';
+            messageDiv.style.maxWidth = '85%';
+            messageDiv.style.wordWrap = 'break-word';
+            messageDiv.style.fontSize = '14px';
+            messageDiv.style.lineHeight = '1.4';
+            
+            if (sender === 'user') {
+                messageDiv.style.background = '#4361ee';
+                messageDiv.style.color = 'white';
+                messageDiv.style.marginLeft = 'auto';
+                messageDiv.style.borderBottomRightRadius = '5px';
+            } else {
+                messageDiv.style.background = 'white';
+                messageDiv.style.color = '#333';
+                messageDiv.style.border = '1px solid #dee2e6';
+                messageDiv.style.marginRight = 'auto';
+                messageDiv.style.borderBottomLeftRadius = '5px';
+            }
+            
+            let formattedText = text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            messageDiv.innerHTML = formattedText;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function addQuickActions() {
+            const messagesDiv = document.getElementById('chatMessages');
+            
+            const existingActions = messagesDiv.querySelector('.quick-actions');
+            if (existingActions) {
+                existingActions.remove();
+            }
+            
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'quick-actions';
+            actionsDiv.style.margin = '15px 0';
+            actionsDiv.style.textAlign = 'center';
+            actionsDiv.style.padding = '15px';
+            actionsDiv.style.background = '#f8f9fa';
+            actionsDiv.style.borderRadius = '10px';
+            actionsDiv.style.border = '1px solid #e9ecef';
+            
+            const title = document.createElement('div');
+            title.textContent = '💡 Quick Help Options - Click Any:';
+            title.style.fontWeight = 'bold';
+            title.style.marginBottom = '10px';
+            title.style.color = '#4361ee';
+            actionsDiv.appendChild(title);
+            
+            const quickTopics = [
+                {'text': '📋 Get My Summary', 'query': 'summary'},
+                {'text': '📊 Academic Analysis', 'query': 'academic performance analysis'},
+                {'text': '🎯 Study Techniques', 'query': 'study techniques time management'},
+                {'text': '📖 Exam Preparation', 'query': 'exam preparation strategies'},
+                {'text': '💼 Career Guidance', 'query': 'career guidance placements'},
+                {'text': '😌 Mental Health', 'query': 'mental health motivation'},
+                {'text': '🌿 Campus Life', 'query': 'campus life balance'},
+                {'text': '👋 End Chat', 'query': 'bye', 'isBye': true}
+            ];
+            
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.style.display = 'flex';
+            buttonsContainer.style.flexWrap = 'wrap';
+            buttonsContainer.style.justifyContent = 'center';
+            buttonsContainer.style.gap = '8px';
+            
+            quickTopics.forEach(topic => {
+                const btn = document.createElement('button');
+                btn.textContent = topic.text;
                 btn.style.background = 'white';
+                btn.style.border = '2px solid #4361ee';
+                btn.style.borderRadius = '20px';
+                btn.style.padding = '10px 15px';
+                btn.style.fontSize = '12px';
+                btn.style.cursor = 'pointer';
+                btn.style.transition = 'all 0.3s ease';
+                btn.style.fontWeight = '500';
                 btn.style.color = '#4361ee';
-            }
-            btn.style.transform = 'translateY(0)';
-            btn.style.boxShadow = 'none';
-        };
-        
-        btn.onclick = () => {
-            if (topic.isBye) {
-                // Handle bye click - auto send and close chat
-                document.getElementById('chatInput').value = 'bye';
-                sendChatMessage();
-            } else {
-                // Auto-fill and send the message for other options
-                document.getElementById('chatInput').value = topic.query;
-                sendChatMessage();
-            }
-        };
-        
-        buttonsContainer.appendChild(btn);
-    });
-    
-    actionsDiv.appendChild(buttonsContainer);
-    
-    // Add note about options
-    const note = document.createElement('div');
-    note.textContent = '📋 Summary shows your academic profile with personalized insights • 👋 Click "End Chat" to close';
-    note.style.marginTop = '10px';
-    note.style.fontSize = '11px';
-    note.style.color = '#6c757d';
-    note.style.fontStyle = 'italic';
-    note.style.textAlign = 'center';
-    actionsDiv.appendChild(note);
-    
-    messagesDiv.appendChild(actionsDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
+                btn.style.flex = '1';
+                btn.style.minWidth = '140px';
+                btn.style.maxWidth = '180px';
+                
+                if (topic.text.includes('Summary')) {
+                    btn.style.background = '#4361ee';
+                    btn.style.color = 'white';
+                    btn.style.border = '2px solid #3a56d4';
+                    btn.style.fontWeight = '600';
+                }
+                
+                if (topic.isBye) {
+                    btn.style.background = '#6c757d';
+                    btn.style.color = 'white';
+                    btn.style.border = '2px solid #495057';
+                    btn.style.fontWeight = '600';
+                }
+                
+                btn.onmouseover = () => {
+                    if (topic.isBye) {
+                        btn.style.background = '#495057';
+                        btn.style.color = 'white';
+                    } else {
+                        btn.style.background = '#4361ee';
+                        btn.style.color = 'white';
+                    }
+                    btn.style.transform = 'translateY(-2px)';
+                    btn.style.boxShadow = '0 4px 8px rgba(67, 97, 238, 0.3)';
+                };
+                btn.onmouseout = () => {
+                    if (topic.text.includes('Summary')) {
+                        btn.style.background = '#4361ee';
+                        btn.style.color = 'white';
+                    } else if (topic.isBye) {
+                        btn.style.background = '#6c757d';
+                        btn.style.color = 'white';
+                    } else {
+                        btn.style.background = 'white';
+                        btn.style.color = '#4361ee';
+                    }
+                    btn.style.transform = 'translateY(0)';
+                    btn.style.boxShadow = 'none';
+                };
+                
+                btn.onclick = () => {
+                    if (topic.isBye) {
+                        document.getElementById('chatInput').value = 'bye';
+                        sendChatMessage();
+                    } else {
+                        document.getElementById('chatInput').value = topic.query;
+                        sendChatMessage();
+                    }
+                };
+                
+                buttonsContainer.appendChild(btn);
+            });
+            
+            actionsDiv.appendChild(buttonsContainer);
+            
+            const note = document.createElement('div');
+            note.textContent = '📋 Summary shows your academic profile with personalized insights • 👋 Click "End Chat" to close';
+            note.style.marginTop = '10px';
+            note.style.fontSize = '11px';
+            note.style.color = '#6c757d';
+            note.style.fontStyle = 'italic';
+            note.style.textAlign = 'center';
+            actionsDiv.appendChild(note);
+            
+            messagesDiv.appendChild(actionsDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
 
-// Close modal when clicking overlay
-document.getElementById('chatOverlay').addEventListener('click', closeChat);
-
-// Handle Enter key in chat input
-document.getElementById('chatInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') sendChatMessage();
-});
-</script>
-    
+        document.getElementById('chatOverlay').addEventListener('click', closeChat);
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+    </script>
 </body>
 </html>
