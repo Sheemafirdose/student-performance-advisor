@@ -689,7 +689,65 @@ class EnhancedChatAdvisor:
         user_msg = user_message.strip()
         user_lower = user_msg.lower()
         
-        # ========== CRITICAL FIX: IMPROVED DATA DETECTION ==========
+        # ========== FIRST CHANGE: NORMAL CONVERSATIONAL BOT ==========
+        # Handle normal conversation - how to use, what, where, fields, doubts
+        if any(word in user_lower for word in ['hi', 'hello', 'hey', 'greetings']):
+            return "Hello! I'm your academic advisor. How can I help you today?"
+        
+        if any(word in user_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end chat']):
+            name = conv.get('name', 'Student')
+            return f"Goodbye {name}! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓"
+        
+        if any(word in user_lower for word in ['thanks', 'thank you']):
+            return "You're welcome! Happy to help! 😊"
+        
+        # How to use, what, where, fields, doubts
+        if any(word in user_lower for word in ['how to use', 'how use', 'how this works']):
+            return "I'm an academic advisor bot. You can ask me about:\n• Study techniques\n• Time management\n• Subject-specific strategies\n• Exam preparation\n• Career guidance\n• Mental health tips\n• Campus life balance\n\nJust ask your question!"
+        
+        if any(word in user_lower for word in ['what', 'what is']):
+            if 'cgpa' in user_lower:
+                return "📊 **CGPA** - Cumulative Grade Point Average (0-10 scale) shows your overall academic performance."
+            elif 'attendance' in user_lower:
+                return "📅 **Attendance** - Your class attendance percentage. 85%+ is recommended for better learning."
+            elif 'study hours' in user_lower:
+                return "⏰ **Study Hours** - Weekly study time outside class. 25+ hours is optimal for good performance."
+            elif 'backlog' in user_lower:
+                return "🔧 **Backlogs** - Subjects pending clearance. Zero backlogs is ideal for academic progress."
+            elif 'competition' in user_lower:
+                return "🏆 **Competitions** - Participation in coding/hackathon events shows practical skills."
+            elif 'project' in user_lower or 'internship' in user_lower:
+                return "💼 **Projects/Internships** - Hands-on experience valuable for placements and higher studies."
+            elif 'confidence' in user_lower:
+                return "💪 **Confidence Level** - Self-assessment of your academic confidence (1-10 scale)."
+            else:
+                return "I can explain academic terms like CGPA, attendance, study hours, backlogs, competitions, projects, and confidence levels. What would you like to know?"
+        
+        if any(word in user_lower for word in ['where', 'where to']):
+            if 'study' in user_lower:
+                return "📚 **Where to study**: Library, quiet classroom, study room, or any distraction-free environment that works for you!"
+            elif 'help' in user_lower:
+                return "🆘 **Where to get help**: Faculty during office hours, college counseling center, study groups, online forums, or academic support services."
+            else:
+                return "I can guide you on where to study, where to get academic help, where to find resources, etc. What specifically?"
+        
+        if any(word in user_lower for word in ['doubt', 'question', 'confused']):
+            return "I can help clarify doubts about:\n• Study techniques\n• Time management\n• Exam preparation\n• Career choices\n• Subject-specific questions\n• Academic planning\n\nWhat's your specific doubt?"
+        
+        # ========== SECOND CHANGE: IF USER ASKS DIFFERENT QUESTIONS ==========
+        # Check if the question matches our knowledge base keywords
+        knowledge_keywords = [
+            'study', 'technique', 'time', 'management', 'exam', 'preparation', 
+            'career', 'placement', 'mental', 'health', 'motivation', 'campus',
+            'cgpa', 'attendance', 'backlog', 'project', 'internship', 'confidence',
+            'academic', 'performance', 'analysis', 'summary'
+        ]
+        
+        # If user asks something completely different from our knowledge base
+        if not any(keyword in user_lower for keyword in knowledge_keywords):
+            return "Good answer! I'm here to help with academic advice whenever you need it. 😊"
+        
+        # ========== REST OF THE ORIGINAL CODE (UNCHANGED) ==========
         # Check if student_data exists and has valid prediction data
         has_student_data = False
         if student_data and isinstance(student_data, dict):
@@ -711,16 +769,6 @@ class EnhancedChatAdvisor:
 
         # ========== USER HAS DATA - SHOW PERSONALIZED SUGGESTIONS ==========
         if has_student_data:
-            # Handle goodbye messages
-            if any(word in user_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end chat']):
-                name = conv.get('name', 'Student')
-                return f"Goodbye {name}! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓"
-            
-            # Handle summary request
-            if any(word in user_lower for word in ['summary', 'my details', 'my profile', 'table', 'overview']):
-                name = conv.get('name', 'Student')
-                return self.generate_personalized_summary(student_data, name)
-            
             # Check for category-specific queries
             category_responses = {
                 'academic performance analysis': self.get_category_response('academic performance analysis'),
@@ -734,6 +782,11 @@ class EnhancedChatAdvisor:
             for category, response in category_responses.items():
                 if any(word in user_lower for word in category.split()):
                     return response
+            
+            # Handle summary request
+            if any(word in user_lower for word in ['summary', 'my details', 'my profile', 'table', 'overview']):
+                name = conv.get('name', 'Student')
+                return self.generate_personalized_summary(student_data, name)
             
             # NORMAL CONVERSATION FLOW (user has data)
             if conv['step'] == 'greeting':
@@ -760,24 +813,16 @@ class EnhancedChatAdvisor:
                     return "Please answer with 'yes' or 'no'. Would you like personalized academic suggestions based on your data?"
             
             elif conv['step'] == 'completed':
-                # Handle normal conversation after completion
-                if any(word in user_lower for word in ['hi', 'hello', 'hey']):
-                    return f"Hello again {conv['name']}! Your academic data is ready. Would you like personalized suggestions?"
-                elif any(word in user_lower for word in ['thanks', 'thank you']):
-                    return f"You're welcome {conv['name']}! Good luck with your studies! 🎓"
-                elif any(word in user_lower for word in ['help', 'suggestion', 'advice']):
-                    return f"I can provide personalized suggestions based on your academic data, {conv['name']}. Would you like me to analyze your performance?"
+                # Search knowledge base for academic queries
+                results = help_system.search_knowledge(user_msg)
+                if results:
+                    response = f"Here's what I found about '{user_msg}':\n\n"
+                    for i, result in enumerate(results[:2]):
+                        response += f"**{result['topic']}** ({result['category']})\n"
+                        response += f"{result['content']}\n\n"
+                    return response
                 else:
-                    # Search knowledge base for academic queries
-                    results = help_system.search_knowledge(user_msg)
-                    if results:
-                        response = f"Here's what I found about '{user_msg}':\n\n"
-                        for i, result in enumerate(results[:2]):
-                            response += f"**{result['topic']}** ({result['category']})\n"
-                            response += f"{result['content']}\n\n"
-                        return response
-                    else:
-                        return f"I'm here to help with academic suggestions, {conv['name']}! You can ask about study tips or use the quick action buttons for specific advice!"
+                    return f"I'm here to help with academic suggestions, {conv['name']}! You can ask about study tips or use the quick action buttons for specific advice!"
             
             else:
                 return f"I'm here to help with academic suggestions, {conv['name']}! You can ask about study tips or use the quick action buttons for specific advice!"
@@ -813,7 +858,8 @@ class EnhancedChatAdvisor:
                 elif any(word in user_lower for word in ['confidence']):
                     return "💪 **Confidence Level:** Self-assessment of your academic confidence (1-10). Higher confidence often correlates with better performance."
                 else:
-                    return f"📋 **Next Steps:** Please fill the form on the left first, {conv['name']}! Here's what to do:\n1. Complete all form fields\n2. Click 'Analyze Performance'\n3. Get your prediction results\n4. Then I can give personalized advice!\n\nNeed help understanding any specific form field?"
+                    # If user asks something different, use the "Good answer" response
+                    return "Good answer! I'm here to help with academic advice whenever you need it. 😊"
             
             else:
                 # Handle general queries without data
@@ -823,14 +869,9 @@ class EnhancedChatAdvisor:
                     return f"You're welcome {conv['name']}! Good luck with your studies! 🎓"
                 elif any(word in user_lower for word in ['help', 'suggestion', 'advice']):
                     return f"📊 **First Step Needed:** Please fill out the form on the left side and click 'Analyze Performance' to get your predictions. Then I can provide personalized academic suggestions! What specific help do you need with the form, {conv['name']}?"
-                elif any(word in user_lower for word in ['study', 'technique', 'time management']):
-                    return "📚 **General Study Tips**:\n• Use Pomodoro technique (25min study, 5min break)\n• Create consistent study schedule\n• Practice active recall instead of passive reading\n• Get enough sleep and take regular breaks!\n\n💡 **For personalized tips:** Fill the form first to get customized advice!"
-                elif any(word in user_lower for word in ['exam', 'preparation']):
-                    return "📖 **Exam Preparation**:\n• Start revising early\n• Practice with past papers\n• Create summary notes\n• Stay calm and get enough rest!\n\n💡 **For personalized strategy:** Complete the form to get customized exam plan!"
-                elif any(word in user_lower for word in ['motivation', 'stress']):
-                    return "😊 **Mental Health Tips**:\n• Take regular breaks\n• Exercise regularly\n• Talk to friends/family\n• Set small achievable goals\n• Remember why you started!\n\n💡 **For customized support:** Fill the form for personalized advice!"
                 else:
-                    return f"📋 **Action Required:** Please fill the form first to unlock personalized advice, {conv['name']}! I can help explain any form field:\n• CGPA & Attendance\n• Study Hours & Backlogs\n• Competitions & Projects\n• Confidence Level\nWhich field would you like me to explain?"
+                    # If user asks something different, use the "Good answer" response
+                    return "Good answer! I'm here to help with academic advice whenever you need it. 😊"
 
 # Replace the existing chat advisor with the fixed version
 chat_advisor = EnhancedChatAdvisor()

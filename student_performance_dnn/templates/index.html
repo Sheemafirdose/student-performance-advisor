@@ -599,8 +599,8 @@
                             <i class="fas fa-chart-bar"></i> Analyze Performance
                         </button>
                         {% if prediction_text or error_text %}
-                        <button type="button" class="btn btn-secondary" id="retry-btn">
-                            <i class="fas fa-redo"></i> Try Again
+                        <button type="button" class="btn btn-secondary" id="reset-btn">
+                            <i class="fas fa-redo"></i> Reset Form
                         </button>
                         {% endif %}
                     </div>
@@ -679,8 +679,8 @@
                     </div>
                     
                     <div class="button-group">
-                        <button type="button" class="btn btn-secondary" id="retry-btn-2">
-                            <i class="fas fa-redo"></i> Try Again
+                        <button type="button" class="btn btn-secondary" id="reset-btn-2">
+                            <i class="fas fa-redo"></i> Reset Form
                         </button>
                     </div>
                 </div>
@@ -744,10 +744,30 @@
                             background: rgba(0,0,0,0.5); z-index: 999;"></div>
 
 <script>
-    // ========== CRITICAL FIX: SIMPLIFIED FORM SUBMISSION ==========
+    // ========== CRITICAL FIX: FORM DATA PERSISTENCE ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded - checking for saved form data');
+        
+        // Try to restore form data from sessionStorage
+        restoreFormData();
+        
+        // Set up reset buttons
+        const resetButtons = document.querySelectorAll('#reset-btn, #reset-btn-2');
+        resetButtons.forEach(button => {
+            if (button) {
+                button.addEventListener('click', function() {
+                    console.log('Reset button clicked - clearing form');
+                    clearFormData();
+                    location.reload();
+                });
+            }
+        });
+    });
+
+    // Save form data before submission
     document.getElementById('prediction-form').addEventListener('submit', function(e) {
-        // Let the form submit normally first
-        // The data will be stored in session by Flask
+        // Save form data to sessionStorage
+        saveFormData();
         
         // Show loading state
         const submitBtn = document.getElementById('analyze-btn');
@@ -762,27 +782,55 @@
         }, 3000);
     });
 
-    // ========== CRITICAL FIX: SIMPLIFIED PAGE LOAD ==========
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Page loaded - checking for prediction results');
+    // Save form data to sessionStorage
+    function saveFormData() {
+        const form = document.getElementById('prediction-form');
+        const formData = new FormData(form);
+        const formObject = {};
         
-        // Set up retry buttons to refresh page
-        const retryButtons = document.querySelectorAll('#retry-btn, #retry-btn-2');
-        retryButtons.forEach(button => {
-            if (button) {
-                button.addEventListener('click', function() {
-                    console.log('Retry button clicked - refreshing page');
-                    location.reload();
-                });
-            }
-        });
+        for (let [key, value] of formData.entries()) {
+            formObject[key] = value;
+        }
+        
+        sessionStorage.setItem('studentFormData', JSON.stringify(formObject));
+        console.log('Form data saved:', formObject);
+    }
 
-        // Clear any stuck session data on initial load
-        fetch('/clear_session', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-        }).catch(err => console.log('Session clear request failed:', err));
-    });
+    // Restore form data from sessionStorage
+    function restoreFormData() {
+        const savedData = sessionStorage.getItem('studentFormData');
+        
+        if (savedData) {
+            const formObject = JSON.parse(savedData);
+            console.log('Restoring form data:', formObject);
+            
+            // Restore input values
+            for (const [key, value] of Object.entries(formObject)) {
+                const element = document.querySelector(`[name="${key}"]`);
+                if (element) {
+                    element.value = value;
+                    
+                    // Trigger validation styling
+                    if (element.type === 'number') {
+                        const numValue = parseFloat(value);
+                        const min = parseFloat(element.min);
+                        const max = parseFloat(element.max);
+                        
+                        if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+                            element.style.borderColor = '#4caf50';
+                            element.style.boxShadow = '0 0 0 3px rgba(76, 175, 80, 0.1)';
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Clear form data from sessionStorage
+    function clearFormData() {
+        sessionStorage.removeItem('studentFormData');
+        console.log('Form data cleared');
+    }
 
     // ========== ALL YOUR EXISTING JAVASCRIPT FUNCTIONS STAY EXACTLY THE SAME ==========
     // Real-time validation
