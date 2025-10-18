@@ -21,10 +21,15 @@
       --light: #f8f9fa;
       --dark: #212529;
       --success: #28a745;
+      --gradient-1: linear-gradient(135deg, #1e3c72, #2a5298, #4a6fc1);
+      --gradient-2: linear-gradient(135deg, #4361ee, #3a0ca3, #7209b7);
+      --gradient-3: linear-gradient(135deg, #4cc9f0, #4361ee, #3a0ca3);
+      --card-bg: rgba(255, 255, 255, 0.15);
+      --card-border: rgba(255, 255, 255, 0.25);
     }
 
     body {
-      background: linear-gradient(135deg, #1e3c72, #2a5298, #4a6fc1);
+      background: var(--gradient-1);
       background-attachment: fixed;
       color: #fff;
       min-height: 100vh;
@@ -175,7 +180,7 @@
       width: 100%;
     }
 
-    /* FEATURE CARDS */
+    /* FEATURE CARDS - IMPROVED COLORS */
     .feature-cards {
       display: flex;
       justify-content: center;
@@ -186,11 +191,11 @@
     }
 
     .feature-card {
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--card-bg);
       padding: 30px;
       border-radius: 20px;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
       width: 280px;
       text-align: center;
       transition: all 0.4s ease;
@@ -199,23 +204,24 @@
 
     .feature-card:hover {
       transform: translateY(-15px) scale(1.03);
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.2);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
     .feature-card i {
       font-size: 3rem;
       margin-bottom: 20px;
-      color: #4cc9f0;
-      background: linear-gradient(135deg, #4cc9f0, #4361ee);
+      background: var(--gradient-3);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
     }
 
     .feature-card h3 {
       font-size: 1.5rem;
       margin-bottom: 15px;
       color: #ffd700;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     .feature-card p {
@@ -224,180 +230,143 @@
     }
 
     /* LOGIN SECTION */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 40px;
-  width: 100%;
-  padding: 0 20px;
-}
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px;
+      width: 100%;
+      padding: 0 20px;
+    }
 
-.login-section {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 50px 60px;
-  border-radius: 25px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  width: 600px;
-  max-width: 95%;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
-}
+    .login-section {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 50px 60px;
+      border-radius: 25px;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      width: 600px;
+      max-width: 95%;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
 
-.login-section:hover {
-  transform: translateY(-8px);
-  box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.12);
-}
+    .login-section:hover {
+      transform: translateY(-8px);
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
+    }
 
-.login-section h3 {
-  font-size: 2.3rem;
-  font-weight: 700;
-  margin-bottom: 35px;
-  text-align: center;
-  color: #ffd700;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
+    .login-section h3 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 35px;
+      text-align: center;
+      color: #ffd700;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
 
-.input-group {
-  text-align: left;
-  margin-bottom: 30px;
-}
+    .input-group {
+      text-align: left;
+      margin-bottom: 30px;
+    }
 
-.input-group label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-  color: #ffd700;
-}
+    .input-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+      color: #ffd700;
+    }
 
-.input-group input {
-  width: 100%;
-  padding: 18px 25px;
-  border-radius: 15px;
-  border: none;
-  outline: none;
-  font-size: 1.1rem;
-  background: rgba(255, 255, 255, 0.95);
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  border: 2px solid transparent;
-}
+    .input-group input {
+      width: 100%;
+      padding: 18px 25px;
+      border-radius: 15px;
+      border: none;
+      outline: none;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.95);
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+    }
 
-.input-group input:focus {
-  background: white;
-  box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.4);
-  transform: translateY(-3px);
-  border: 2px solid rgba(76, 201, 240, 0.3);
-}
+    .input-group input:focus {
+      background: white;
+      box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.4);
+      transform: translateY(-3px);
+      border: 2px solid rgba(76, 201, 240, 0.3);
+    }
 
-.btn {
-  background: linear-gradient(135deg, var(--accent), var(--primary));
-  color: white;
-  padding: 18px 35px;
-  border-radius: 30px;
-  border: none;
-  font-weight: 600;
-  font-size: 1.15rem;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  margin-top: 15px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
-  position: relative;
-  overflow: hidden;
-}
+    .btn {
+      background: var(--gradient-3);
+      color: white;
+      padding: 18px 35px;
+      border-radius: 30px;
+      border: none;
+      font-weight: 600;
+      font-size: 1.15rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      margin-top: 15px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
 
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
-}
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s ease;
+    }
 
-.btn:hover::before {
-  left: 100%;
-}
+    .btn:hover::before {
+      left: 100%;
+    }
 
-.btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(67, 97, 238, 0.4);
-}
+    .btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(67, 97, 238, 0.4);
+    }
 
-.error-message {
-  color: #ff6b6b;
-  margin-top: 15px;
-  font-size: 0.95rem;
-  display: none;
-  text-align: center;
-  font-weight: 500;
-  padding: 10px;
-  background: rgba(255, 107, 107, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 107, 107, 0.2);
-}
+    .error-message {
+      color: #ff6b6b;
+      margin-top: 15px;
+      font-size: 0.95rem;
+      display: none;
+      text-align: center;
+      font-weight: 500;
+      padding: 10px;
+      background: rgba(255, 107, 107, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
 
-.info-text {
-  color: #e0e0e0;
-  font-size: 0.95rem;
-  margin-top: 20px;
-  text-align: center;
-  line-height: 1.6;
-}
+    .info-text {
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      margin-top: 20px;
+      text-align: center;
+      line-height: 1.6;
+    }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .login-section {
-    padding: 40px 30px;
-    width: 90%;
-    margin: 0 auto;
-  }
-  
-  .login-section h3 {
-    font-size: 2rem;
-  }
-  
-  .btn {
-    padding: 16px 30px;
-    font-size: 1.1rem;
-  }
-  
-  .input-group input {
-    padding: 16px 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-section {
-    padding: 30px 20px;
-    width: 95%;
-  }
-  
-  .login-section h3 {
-    font-size: 1.8rem;
-  }
-  
-  .btn {
-    padding: 15px 25px;
-    font-size: 1rem;
-  }
-}
     /* ABOUT SECTION */
     .about-section {
       background: rgba(0, 0, 0, 0.3);
@@ -435,7 +404,7 @@
       transform: translateX(-50%);
       width: 100px;
       height: 5px;
-      background: linear-gradient(90deg, var(--accent), var(--primary));
+      background: var(--gradient-3);
       border-radius: 3px;
     }
 
@@ -448,11 +417,11 @@
     }
 
     .about-card {
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--card-bg);
       padding: 40px 30px;
       border-radius: 20px;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
       transition: all 0.4s ease;
       display: flex;
       flex-direction: column;
@@ -469,7 +438,7 @@
       left: 0;
       width: 5px;
       height: 100%;
-      background: linear-gradient(to bottom, var(--accent), var(--primary));
+      background: var(--gradient-3);
       transition: width 0.4s ease;
     }
 
@@ -480,14 +449,16 @@
 
     .about-card:hover {
       transform: translateY(-15px);
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.2);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
 
     .about-card i {
       font-size: 3.5rem;
       margin-bottom: 25px;
-      color: #4cc9f0;
+      background: var(--gradient-3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       z-index: 1;
     }
 
@@ -505,7 +476,7 @@
       z-index: 1;
     }
 
-    /* HOW IT WORKS */
+    /* HOW IT WORKS - IMPROVED BUBBLE COLORS */
     .how-it-works {
       padding: 120px 60px;
       background: rgba(255, 255, 255, 0.05);
@@ -532,13 +503,13 @@
     }
 
     .step {
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--card-bg);
       padding: 35px 25px;
       border-radius: 20px;
       text-align: center;
       width: 280px;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
       transition: all 0.4s ease;
       display: flex;
       flex-direction: column;
@@ -555,7 +526,7 @@
       left: 0;
       width: 100%;
       height: 5px;
-      background: linear-gradient(90deg, var(--accent), var(--primary));
+      background: var(--gradient-3);
       transform: scaleX(0);
       transition: transform 0.4s ease;
     }
@@ -566,12 +537,12 @@
 
     .step:hover {
       transform: translateY(-12px);
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.2);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
     .step-number {
-      background: linear-gradient(135deg, var(--accent), var(--primary));
+      background: var(--gradient-3);
       width: 70px;
       height: 70px;
       border-radius: 50%;
@@ -583,16 +554,20 @@
       font-size: 1.5rem;
       box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
       transition: all 0.4s ease;
+      color: white;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     .step:hover .step-number {
       transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 12px 25px rgba(67, 97, 238, 0.5);
     }
 
     .step h3 {
       font-size: 1.5rem;
       margin-bottom: 15px;
       color: #ffd700;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     .step p {
@@ -601,195 +576,165 @@
     }
 
     /* FOOTER */
-    /* FOOTER */
-footer {
-  background: rgba(0, 0, 0, 0.7);
-  padding: 60px 20px 30px;
-  margin-top: auto;
-  backdrop-filter: blur(15px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-}
+    footer {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 60px 20px 30px;
+      margin-top: auto;
+      backdrop-filter: blur(15px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
 
-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: linear-gradient(90deg, var(--accent), var(--primary), var(--secondary));
-}
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--gradient-3);
+    }
 
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 80px;
-  padding-bottom: 40px;
-  align-items: start;
-}
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 80px;
+      padding-bottom: 40px;
+      align-items: start;
+    }
 
-.footer-info {
-  text-align: left;
-}
+    .footer-info {
+      text-align: left;
+    }
 
-.footer-info h4 {
-  color: #ffd700;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
+    .footer-info h4 {
+      color: #ffd700;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
 
-.footer-info p {
-  line-height: 1.7;
-  color: #e0e0e0;
-  font-size: 1.1rem;
-  max-width: 500px;
-}
+    .footer-info p {
+      line-height: 1.7;
+      color: #e0e0e0;
+      font-size: 1.1rem;
+      max-width: 500px;
+    }
 
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 0;
-}
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 0;
+    }
 
-.footer-links a {
-  color: #fff;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  padding: 5px 0;
-  font-size: 1.1rem;
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+    .footer-links a {
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      padding: 5px 0;
+      font-size: 1.1rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.footer-links a::before {
-  content: '>';
-  color: #4cc9f0;
-  font-weight: bold;
-}
+    .footer-links a::before {
+      content: '>';
+      color: #4cc9f0;
+      font-weight: bold;
+    }
 
-.footer-links a:hover {
-  color: #4cc9f0;
-  transform: translateX(5px);
-}
+    .footer-links a:hover {
+      color: #4cc9f0;
+      transform: translateX(5px);
+    }
 
-.footer-bottom {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  color: #b0b0b0;
-  font-size: 0.95rem;
-}
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+      color: #b0b0b0;
+      font-size: 0.95rem;
+    }
 
-.footer-bottom p {
-  margin-bottom: 8px;
-}
-/* Get in Touch Section */
-.get-in-touch {
-  margin-top: 25px;
-}
+    .footer-bottom p {
+      margin-bottom: 8px;
+    }
+    
+    /* Get in Touch Section */
+    .get-in-touch {
+      margin-top: 25px;
+    }
 
-.get-in-touch h5 {
-  color: #ffd700;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
+    .get-in-touch h5 {
+      color: #ffd700;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
 
-.social-links {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
+    .social-links {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-.social-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-  text-decoration: none;
-  padding: 10px 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
-.social-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px);
-  color: #4cc9f0;
-  border-color: rgba(76, 201, 240, 0.4);
-}
+    .social-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+      color: #4cc9f0;
+      border-color: rgba(76, 201, 240, 0.4);
+    }
 
-.social-link i {
-  font-size: 1.1rem;
-}
+    .social-link i {
+      font-size: 1.1rem;
+    }
 
-/* LinkedIn specific color on hover */
-.social-link:hover .fa-linkedin {
-  color: #0077b5;
-}
+    /* LinkedIn specific color on hover */
+    .social-link:hover .fa-linkedin {
+      color: #0077b5;
+    }
 
-/* Email specific color on hover */
-.social-link:hover .fa-envelope {
-  color: #ea4335;
-}
+    /* Email specific color on hover */
+    .social-link:hover .fa-envelope {
+      color: #ea4335;
+    }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .social-links {
-    justify-content: center;
-  }
-  
-  .get-in-touch {
-    text-align: center;
-  }
-}
-.developer-badge {
-  background: linear-gradient(135deg, #4361ee, #7209b7);
-  padding: 12px 25px;
-  border-radius: 30px;
-  display: inline-block;
-  margin-top: 20px;
-  font-weight: 600;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-}
+    .developer-badge {
+      background: var(--gradient-2);
+      padding: 12px 25px;
+      border-radius: 30px;
+      display: inline-block;
+      margin-top: 20px;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      color: white;
+    }
 
-.developer-badge:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    text-align: center;
-  }
-  
-  .footer-info {
-    text-align: center;
-  }
-  
-  .footer-info p {
-    margin: 0 auto;
-  }
-  
-  .footer-links {
-    align-items: center;
-  }
-}
+    .developer-badge:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
 
     /* RESPONSIVE */
     @media (max-width: 1024px) {
@@ -880,6 +825,14 @@ footer::before {
         width: 100%;
         max-width: 320px;
       }
+      
+      .social-links {
+        justify-content: center;
+      }
+      
+      .get-in-touch {
+        text-align: center;
+      }
     }
 
     @media (max-width: 480px) {
@@ -949,23 +902,22 @@ footer::before {
       </div>
 
       <!-- LOGIN SECTION -->
-<!-- LOGIN SECTION -->
-<section id="login">
-  <div class="login-container">
-    <div class="login-section">
-      <h3>Student Portal</h3>
-      <div class="input-group">
-        <label for="regno"><i class="fas fa-id-card"></i> Register Number</label>
-        <input type="text" id="regno" placeholder="Enter your register number" required>
-      </div>
-      <button type="button" class="btn" onclick="loginToApp()">
-        <i class="fas fa-sign-in-alt"></i> Login to App
-      </button>
-      <div id="error" class="error-message"></div>
+      <section id="login">
+        <div class="login-container">
+          <div class="login-section">
+            <h3>Student Portal</h3>
+            <div class="input-group">
+              <label for="regno"><i class="fas fa-id-card"></i> Register Number</label>
+              <input type="text" id="regno" placeholder="Enter your register number" required>
+            </div>
+            <button type="button" class="btn" onclick="loginToApp()">
+              <i class="fas fa-sign-in-alt"></i> Login to App
+            </button>
+            <div id="error" class="error-message"></div>
+          </div>
+        </div>
+      </section>
     </div>
-  </div>
-</section>
-
   </section>
 
   <!-- ABOUT SECTION -->
@@ -1017,120 +969,120 @@ footer::before {
     </div>
   </section>
 
-<footer>
-  <div class="footer-content">
-    <div class="footer-info">
-      <h4>AI Student Performance Predictor</h4>
-      <p>Providing AI-driven insights to help students improve and succeed.</p>
-      
-      <!-- Get in Touch Section -->
-      <div class="get-in-touch">
-        <h5>Get in Touch</h5>
-        <div class="social-links">
-          <a href="https://www.linkedin.com/in/shaik-sheema-firdose/" target="_blank" class="social-link">
-            <i class="fab fa-linkedin"></i>
-            LinkedIn
-          </a>
-          <a href="mailto:sheemafirdose1311@gmail.com" class="social-link">
-            <i class="fas fa-envelope"></i>
-            Email
-          </a>
+  <footer>
+    <div class="footer-content">
+      <div class="footer-info">
+        <h4>AI Student Performance Predictor</h4>
+        <p>Providing AI-driven insights to help students improve and succeed.</p>
+        
+        <!-- Get in Touch Section -->
+        <div class="get-in-touch">
+          <h5>Get in Touch</h5>
+          <div class="social-links">
+            <a href="https://www.linkedin.com/in/shaik-sheema-firdose/" target="_blank" class="social-link">
+              <i class="fab fa-linkedin"></i>
+              LinkedIn
+            </a>
+            <a href="mailto:sheemafirdose1311@gmail.com" class="social-link">
+              <i class="fas fa-envelope"></i>
+              Email
+            </a>
+          </div>
         </div>
+      </div>
+      
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#login">Login</a>
       </div>
     </div>
     
-    <div class="footer-links">
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#login">Login</a>
+    <div class="footer-bottom">
+      <p>&copy; 2025 AI Student Performance Predictor. All rights reserved.</p>
+      <div class="developer-badge">
+        Designed and developed by Seema
+      </div>
     </div>
-  </div>
-  
-  <div class="footer-bottom">
-    <p>&copy; 2025 AI Student Performance Predictor. All rights reserved.</p>
-    <div class="developer-badge">
-      Designed and developed by Seema
-    </div>
-  </div>
-</footer>
+  </footer>
 
- <script>
-function loginToApp() {
-  const regno = document.getElementById('regno').value.trim().toUpperCase();
-  const error = document.getElementById('error');
+  <script>
+    function loginToApp() {
+      const regno = document.getElementById('regno').value.trim().toUpperCase();
+      const error = document.getElementById('error');
 
-  // Strict register number validation pattern
-  const regnoPattern = /^\d{2}091A[A-Z0-9]{3,5}$/i;
-  
-  if (regno.length > 0 && regnoPattern.test(regno)) {
-    error.style.display = "none";
-    localStorage.setItem('studentRegNo', regno);
-    
-    // Show loading state
-    const btn = document.querySelector('.btn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
-    btn.disabled = true;
-    
-    // Simple redirect to app
-    setTimeout(() => {
-      window.location.href = '/app';
-    }, 1000);
-    
-  } else {
-    error.style.display = "block";
-    
-    if (regno.length === 0) {
-      error.textContent = "❌ Please enter your register number!";
-    } else {
-      error.textContent = "❌ Please enter a valid register number (e.g., 22091A3352)";
+      // Strict register number validation pattern
+      const regnoPattern = /^\d{2}091A[A-Z0-9]{3,5}$/i;
+      
+      if (regno.length > 0 && regnoPattern.test(regno)) {
+        error.style.display = "none";
+        localStorage.setItem('studentRegNo', regno);
+        
+        // Show loading state
+        const btn = document.querySelector('.btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
+        btn.disabled = true;
+        
+        // Simple redirect to app
+        setTimeout(() => {
+          window.location.href = '/app';
+        }, 1000);
+        
+      } else {
+        error.style.display = "block";
+        
+        if (regno.length === 0) {
+          error.textContent = "❌ Please enter your register number!";
+        } else {
+          error.textContent = "❌ Please enter a valid register number (e.g., 22091A3352)";
+        }
+        
+        // Add shake animation to input
+        const input = document.getElementById('regno');
+        input.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+          input.style.animation = '';
+        }, 500);
+      }
     }
-    
-    // Add shake animation to input
-    const input = document.getElementById('regno');
-    input.style.animation = 'shake 0.5s ease-in-out';
-    setTimeout(() => {
-      input.style.animation = '';
-    }, 500);
-  }
-}
 
-// Add shake animation to CSS
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-  }
-`;
-document.head.appendChild(style);
+    // Add shake animation to CSS
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
 
-// Remove auto-formatting with spaces and ensure uppercase
-document.getElementById('regno').addEventListener('input', function(e) {
-  // Convert to uppercase and remove any spaces
-  let value = e.target.value.toUpperCase().replace(/\s+/g, '');
-  e.target.value = value;
-});
+    // Remove auto-formatting with spaces and ensure uppercase
+    document.getElementById('regno').addEventListener('input', function(e) {
+      // Convert to uppercase and remove any spaces
+      let value = e.target.value.toUpperCase().replace(/\s+/g, '');
+      e.target.value = value;
+    });
 
-// Handle Enter key
-document.getElementById('regno').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    loginToApp();
-  }
-});
+    // Handle Enter key
+    document.getElementById('regno').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        loginToApp();
+      }
+    });
 
-// Update examples to show correct format
-const regnoInput = document.getElementById('regno');
-const examples = ['22091A3352', '23091A123', '24091A45678'];
-let exampleIndex = 0;
+    // Update examples to show correct format
+    const regnoInput = document.getElementById('regno');
+    const examples = ['22091A3352', '23091A123', '24091A45678'];
+    let exampleIndex = 0;
 
-setInterval(() => {
-  regnoInput.placeholder = `e.g., ${examples[exampleIndex]}`;
-  exampleIndex = (exampleIndex + 1) % examples.length;
-}, 2000);
-</script>
+    setInterval(() => {
+      regnoInput.placeholder = `e.g., ${examples[exampleIndex]}`;
+      exampleIndex = (exampleIndex + 1) % examples.length;
+    }, 2000);
+  </script>
 </body>
 </html>
