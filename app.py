@@ -1,4 +1,4 @@
-import os
+import os  # ⬅️ ADD THIS CRITICAL IMPORT
 from flask import Flask, render_template, request, session, jsonify
 import numpy as np
 import pandas as pd
@@ -463,12 +463,18 @@ class StudentHelpSystem:
 help_system = StudentHelpSystem()
 
 # ==================== YOUR EXISTING FLASK APP ====================
-app = Flask(__name__, template_folder='student_performance_dnn/templates')
+app = Flask(__name__, template_folder='templates')  # Fixed template folder path
 app.secret_key = 'your_secret_key_here'
 
-scaler = joblib.load("student_performance_dnn/production_model/scaler.pkl")
-dnn_model = load_model("student_performance_dnn/production_model/student_performance_model.keras")
-label_encoder = joblib.load("student_performance_dnn/production_model/label_encoder.pkl")
+# Load models with error handling
+try:
+    scaler = joblib.load("student_performance_dnn/production_model/scaler.pkl")
+    dnn_model = load_model("student_performance_dnn/production_model/student_performance_model.keras")
+    label_encoder = joblib.load("student_performance_dnn/production_model/label_encoder.pkl")
+    print("✅ Models loaded successfully")
+except Exception as e:
+    print(f"❌ Error loading models: {e}")
+    # You might want to handle this more gracefully in production
 
 # --- CORRECT Feature order that matches your NEW SCALER (8 features) ---
 SCALER_FEATURES = [
@@ -479,11 +485,11 @@ SCALER_FEATURES = [
     'competitions', 
     'projects_internships', 
     'prevsem_cgpa',
-    'confidence_level'  # INCLUDED in new model
+    'confidence_level'
 ]
 
 # Get class labels from your label encoder
-CLASS_LABELS = list(label_encoder.classes_)
+CLASS_LABELS = list(label_encoder.classes_) if 'label_encoder' in locals() else ['Below Average', 'Average', 'Good', 'Excellent']
 
 def fix_excellent_good_confusion(predicted_class, confidence, features_dict, probabilities):
     """
@@ -734,6 +740,7 @@ def get_quick_suggestions():
             'success': False,
             'message': f'Error fetching quick suggestions: {str(e)}'
         })
+
 # ==================== TOPIC SUGGESTIONS ROUTE ====================
 @app.route('/get_topic_suggestions', methods=['POST'])
 def get_topic_suggestions():
@@ -851,6 +858,7 @@ def get_topic_suggestions():
             'success': False,
             'message': f'Error fetching topic suggestions: {str(e)}'
         })
+
 # ==================== HELP SYSTEM ROUTES ====================
 @app.route('/get_help_categories', methods=['GET'])
 def get_help_categories():
@@ -889,7 +897,7 @@ def search_help():
             'success': False,
             'message': f'Error searching help: {str(e)}'
         })
-# ==================== FALLBACK CHAT ROUTES ====================
+
 # ==================== FALLBACK CHAT ROUTES ====================
 @app.route('/start_chat', methods=['POST'])
 def start_chat():
@@ -939,6 +947,10 @@ def scaler_info():
     except Exception as e:
         return f"Error: {e}"
 
+# Health check route for Render
+@app.route('/health')
+def health_check():
+    return jsonify({'status': 'healthy', 'message': 'Server is running'})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
