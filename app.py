@@ -463,7 +463,7 @@ class StudentHelpSystem:
 help_system = StudentHelpSystem()
 
 # ==================== YOUR EXISTING FLASK APP ====================
-app = Flask(__name__, template_folder='templates')  # Fixed template folder path
+app = Flask(__name__, template_folder='student_performance_dnn/templates')  # ⬅️ THIS IS CORRECT
 app.secret_key = 'your_secret_key_here'
 
 # Load models with error handling
