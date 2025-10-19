@@ -648,7 +648,8 @@ def home():
     return render_template('home.html')  # Show landing page first
 
 # ==================== SIMPLE SUGGESTION ROUTES ====================
-#@app.route('/get_suggestions', methods=['POST'])
+
+@app.route('/get_suggestions', methods=['POST'])
 def get_suggestions():
     """Get personalized suggestions - SIMPLE VERSION"""
     try:
