@@ -1167,35 +1167,31 @@ document.addEventListener('DOMContentLoaded', function() {
 function getPersonalizedSuggestions() {
     console.log('Getting personalized suggestions...');
     
+    // Get the button that was clicked
     const button = event.target;
+    
+    // Show loading state
     const originalText = button.innerHTML;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Suggestions...';
     button.disabled = true;
     
-    // Get form data to send as backup
-    const formData = new FormData(document.getElementById('prediction-form'));
-    const formObject = {};
-    for (let [key, value] of formData.entries()) {
-        formObject[key] = value;
-    }
-    
-    // Add prediction result
-    const predictionElement = document.querySelector('.result-title');
-    if (predictionElement) {
-        formObject['predicted_class'] = predictionElement.textContent.replace('Predicted Performance: ', '');
-    }
-    
     fetch('/get_suggestions', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formObject)
+        headers: {'Content-Type': 'application/json'}
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
+        // Restore button
         button.innerHTML = originalText;
         button.disabled = false;
         
         if (data.success) {
+            // Show suggestions in a modal
             showSuggestionModal(data.suggestions);
         } else {
             alert(data.message);
@@ -1203,6 +1199,7 @@ function getPersonalizedSuggestions() {
     })
     .catch(error => {
         console.error('Error:', error);
+        // Restore button
         button.innerHTML = originalText;
         button.disabled = false;
         alert('Error getting suggestions. Please try again.');
