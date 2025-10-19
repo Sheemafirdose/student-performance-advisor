@@ -465,6 +465,68 @@
                 font-size: 24px;
             }
         }
+        /* Add this to your existing CSS */
+.analysis-section {
+    margin-bottom: 20px;
+}
+
+.analysis-section h4 {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-number {
+    background: #4361ee;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.data-item {
+    padding: 8px;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+/* Add hover effects for the 4 options */
+.insight-button {
+    background: #e3f2fd;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.insight-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Specific colors for each button */
+.summary-btn { background: #e3f2fd; }
+.summary-btn:hover { background: #bbdefb; }
+
+.data-btn { background: #e8f5e8; }
+.data-btn:hover { background: #c8e6c9; }
+
+.suggestions-btn { background: #fff3e0; }
+.suggestions-btn:hover { background: #ffe0b2; }
+
+.info-btn { background: #fce4ec; }
+.info-btn:hover { background: #f8bbd9; }
     </style>
 </head>
 <body>
@@ -645,33 +707,33 @@
 
     </div>
 
-                     <!-- SUGGESTIONS BOX -->
-    <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
-        <button onclick="startSuggestionChat()" 
-        style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%); 
-               color: white; 
-               border: none; 
-               padding: 18px 35px; 
-               border-radius: 30px; 
-               cursor: pointer;
-               font-size: 17px;
-               font-weight: 700;
-               box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
-               transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-               position: relative;
-               overflow: hidden;
-               letter-spacing: 0.5px;
-               text-transform: uppercase;"
-        onmouseover="this.style.transform='translateY(-6px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(67, 97, 238, 0.6)'; this.style.background='linear-gradient(135deg, #3a56d4 0%, #5a08a1 100%)';"
-        onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(67, 97, 238, 0.4)'; this.style.background='linear-gradient(135deg, #4361ee 0%, #7209b7 100%)';">
-    💬 GET PERSONALIZED ADVICE
-    <!-- Animated gradient overlay -->
-    <span style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.8s;"></span>
+   <!-- SUGGESTIONS BOX -->
+<div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
+    <button onclick="getPersonalizedSuggestions()" 
+    style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%); 
+           color: white; 
+           border: none; 
+           padding: 18px 35px; 
+           border-radius: 30px; 
+           cursor: pointer;
+           font-size: 17px;
+           font-weight: 700;
+           box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+           position: relative;
+           overflow: hidden;
+           letter-spacing: 0.5px;
+           text-transform: uppercase;"
+    onmouseover="this.style.transform='translateY(-6px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(67, 97, 238, 0.6)'; this.style.background='linear-gradient(135deg, #3a56d4 0%, #5a08a1 100%)';"
+    onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(67, 97, 238, 0.4)'; this.style.background='linear-gradient(135deg, #4361ee 0%, #7209b7 100%)';">
+💬 GET PERSONALIZED ADVICE
+<!-- Animated gradient overlay -->
+<span style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.8s;"></span>
 </button>
-        <p style="margin-top: 12px; color: #6c757d; font-size: 14px; font-weight: 500;">
-    Chat with AI advisor for personalized academic guidance
+    <p style="margin-top: 12px; color: #6c757d; font-size: 14px; font-weight: 500;">
+Get personalized academic suggestions based on your performance
 </p>
-    </div>
+</div>
     
     
         </button>
@@ -857,59 +919,11 @@
     // ========== CRITICAL FIX: IMPROVED CHAT FUNCTIONS ==========
     let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
     
-    function startStaticChat() {
-        console.log('Starting static chat');
-        document.getElementById('chatModal').style.display = 'block';
-        document.getElementById('chatOverlay').style.display = 'block';
-        document.getElementById('chatMessages').innerHTML = '';
-        
-        // Always start fresh chat
-        fetch('/start_chat', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({session_id: currentSessionId})
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            addChatMessage(data.response, 'advisor');
-        })
-        .catch(error => {
-            console.error('Chat start error:', error);
-            addChatMessage("I'm having trouble starting the chat. Please make sure you've submitted the form first and try again.", 'advisor');
-        });
-    }
+ function startStaticChat() {
+    console.log('Academic Advisor - Coming Soon');
+    alert('🎓 Academic Advisor feature is coming soon! For now, use the "GET PERSONALIZED ADVICE" button for detailed suggestions and help topics.');
+}
 
-    function startSuggestionChat() {
-        console.log('Starting suggestion chat');
-        document.getElementById('chatModal').style.display = 'block';
-        document.getElementById('chatOverlay').style.display = 'block';
-        document.getElementById('chatMessages').innerHTML = '';
-        
-        fetch('/start_chat', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({session_id: currentSessionId})
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            addChatMessage(data.response, 'advisor');
-            setTimeout(addQuickActions, 100);
-        })
-        .catch(error => {
-            console.error('Suggestion chat error:', error);
-            addChatMessage("I'm having trouble accessing your data. Please make sure you've submitted the form and try again.", 'advisor');
-        });
-    }
 
     function closeChat() {
         document.getElementById('chatModal').style.display = 'none';
@@ -1127,7 +1141,7 @@
     });
     // Enhanced button hover effects
 function setupButtonEffects() {
-    const suggestionBtn = document.querySelector('button[onclick="startSuggestionChat()"]');
+    const suggestionBtn = document.querySelector('button[onclick="getPersonalizedSuggestions()"]');
     if (suggestionBtn) {
         suggestionBtn.addEventListener('mouseenter', function() {
             const shimmer = this.querySelector('span');
@@ -1148,6 +1162,627 @@ function setupButtonEffects() {
 // Call this when page loads
 document.addEventListener('DOMContentLoaded', function() {
     setupButtonEffects();
+});
+// ========== NEW SUGGESTION FUNCTION ==========
+function getPersonalizedSuggestions() {
+    console.log('Getting personalized suggestions...');
+    
+    // Get the button that was clicked
+    const button = event.target;
+    
+    // Show loading state
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Suggestions...';
+    button.disabled = true;
+    
+    fetch('/get_suggestions', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+        
+        if (data.success) {
+            // Show suggestions in a modal
+            showSuggestionModal(data.suggestions);
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+        alert('Error getting suggestions. Please try again.');
+    });
+}
+function showSuggestionModal(suggestions) {
+    // Get student data
+    const formData = JSON.parse(sessionStorage.getItem('studentFormData') || '{}');
+    
+    // Create modal
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.width = '90%';
+    modal.style.maxWidth = '700px';
+    modal.style.maxHeight = '80vh';
+    modal.style.background = 'white';
+    modal.style.borderRadius = '15px';
+    modal.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    modal.style.zIndex = '1000';
+    modal.style.overflow = 'hidden';
+    
+    // Modal header
+    const header = document.createElement('div');
+    header.style.background = 'linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%)';
+    header.style.color = 'white';
+    header.style.padding = '20px';
+    header.style.display = 'flex';
+    header.style.justifyContent = 'space-between';
+    header.style.alignItems = 'center';
+    header.innerHTML = `
+        <h3 style="margin: 0; font-size: 1.2rem;">🎓 Academic Performance Analysis</h3>
+        <button onclick="this.parentElement.parentElement.remove(); document.getElementById('suggestionOverlay').remove();" 
+                style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
+    `;
+    
+    // Modal content
+    const content = document.createElement('div');
+    content.style.padding = '25px';
+    content.style.maxHeight = '60vh';
+    content.style.overflowY = 'auto';
+    content.style.background = '#f8f9fa';
+    
+    // Format the personalized suggestions (keep your current format)
+    const formattedSuggestions = suggestions.replace(/\n/g, '<br>');
+    
+    content.innerHTML = `
+        <!-- Your Personalized Analysis - KEEP EXISTING FORMAT -->
+        <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #4361ee; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #4361ee;">📊 Your Personalized Analysis</h4>
+            <div style="font-size: 14px; line-height: 1.6; color: #333;">
+                ${formattedSuggestions}
+            </div>
+        </div>
+        
+        <!-- REPLACE Quick Help Topics with New Options -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+    <button onclick="showSummary()" class="insight-button summary-btn">
+        <div style="font-weight: 600; color: #1565c0;">📋 Performance Summary</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">Your academic overview</div>
+    </button>
+    
+    <button onclick="showDataAnalysis()" class="insight-button data-btn">
+        <div style="font-weight: 600; color: #2e7d32;">📊 Data Analysis</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">Your entered data & prediction</div>
+    </button>
+    
+    <button onclick="showSmartSuggestions()" class="insight-button suggestions-btn">
+        <div style="font-weight: 600; color: #ef6c00;">🎯 Smart Suggestions</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">Based on your data</div>
+    </button>
+    
+    <button onclick="showMoreInfo()" class="insight-button info-btn">
+        <div style="font-weight: 600; color: #c2185b;">ℹ️ More Information</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">About this application</div>
+    </button>
+</div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="this.parentElement.parentElement.parentElement.remove(); document.getElementById('suggestionOverlay').remove();" 
+                    style="background: #4361ee; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                Close
+            </button>
+        </div>
+    `;
+    
+    modal.appendChild(header);
+    modal.appendChild(content);
+    
+    // Overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'suggestionOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '999';
+    
+    // Close on overlay click
+    overlay.onclick = function() {
+        modal.remove();
+        overlay.remove();
+    };
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
+}
+// New functions for the 4 options - WITH PROPER CLOSE FUNCTIONALITY
+function showSummary() {
+    const formData = JSON.parse(sessionStorage.getItem('studentFormData') || '{}');
+    const prediction = '{{ prediction_text }}'.replace('Predicted Performance: ', '') || 'Good';
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '1001';
+    
+    const summaryModal = document.createElement('div');
+    summaryModal.style.position = 'fixed';
+    summaryModal.style.top = '50%';
+    summaryModal.style.left = '50%';
+    summaryModal.style.transform = 'translate(-50%, -50%)';
+    summaryModal.style.width = '90%';
+    summaryModal.style.maxWidth = '500px';
+    summaryModal.style.background = 'white';
+    summaryModal.style.borderRadius = '15px';
+    summaryModal.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    summaryModal.style.zIndex = '1002';
+    summaryModal.style.overflow = 'hidden';
+    
+    summaryModal.innerHTML = `
+        <div style="background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">📋 Performance Summary</h3>
+            <button onclick="closeSubModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
+        </div>
+        <div style="padding: 25px; background: #f8f9fa;">
+            <div style="background: white; padding: 20px; border-radius: 10px;">
+                <p style="margin: 0; line-height: 1.6; font-size: 14px;">
+                    ${getDetailedSummary(prediction, formData)}
+                </p>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="closeSubModal()" 
+                        style="background: #4361ee; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Close function for this modal
+    window.closeSubModal = function() {
+        document.body.removeChild(summaryModal);
+        document.body.removeChild(overlay);
+    };
+    
+    // Close when clicking overlay
+    overlay.onclick = window.closeSubModal;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(summaryModal);
+}
+
+function showDataAnalysis() {
+    const formData = JSON.parse(sessionStorage.getItem('studentFormData') || '{}');
+    const prediction = '{{ prediction_text }}'.replace('Predicted Performance: ', '') || 'N/A';
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '1001';
+    
+    const dataModal = document.createElement('div');
+    dataModal.style.position = 'fixed';
+    dataModal.style.top = '50%';
+    dataModal.style.left = '50%';
+    dataModal.style.transform = 'translate(-50%, -50%)';
+    dataModal.style.width = '90%';
+    dataModal.style.maxWidth = '500px';
+    dataModal.style.background = 'white';
+    dataModal.style.borderRadius = '15px';
+    dataModal.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    dataModal.style.zIndex = '1002';
+    dataModal.style.overflow = 'hidden';
+    
+    dataModal.innerHTML = `
+        <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">📊 Your Academic Data</h3>
+            <button onclick="closeDataModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
+        </div>
+        <div style="padding: 25px; background: #f8f9fa;">
+            <div style="background: white; padding: 20px; border-radius: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                    <div><strong>CGPA:</strong> ${formData.total_cgpa || 'N/A'}/10</div>
+                    <div><strong>Attendance:</strong> ${formData.attendance || 'N/A'}%</div>
+                    <div><strong>Study Hours:</strong> ${formData.study_hours || 'N/A'}</div>
+                    <div><strong>Backlogs:</strong> ${formData.backlogs || 'N/A'}</div>
+                    <div><strong>Competitions:</strong> ${formData.competitions || 'N/A'}</div>
+                    <div><strong>Projects:</strong> ${formData.projects_internships || 'N/A'}</div>
+                    <div><strong>Confidence:</strong> ${formData.confidence_level || 'N/A'}/10</div>
+                    <div><strong>Prediction:</strong> ${prediction}</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="closeDataModal()" 
+                        style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Close function for this modal
+    window.closeDataModal = function() {
+        document.body.removeChild(dataModal);
+        document.body.removeChild(overlay);
+    };
+    
+    // Close when clicking overlay
+    overlay.onclick = window.closeDataModal;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(dataModal);
+}
+
+function showSmartSuggestions() {
+    const formData = JSON.parse(sessionStorage.getItem('studentFormData') || '{}');
+    const prediction = '{{ prediction_text }}'.replace('Predicted Performance: ', '') || 'Good';
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '1001';
+    
+    const suggestionsModal = document.createElement('div');
+    suggestionsModal.style.position = 'fixed';
+    suggestionsModal.style.top = '50%';
+    suggestionsModal.style.left = '50%';
+    suggestionsModal.style.transform = 'translate(-50%, -50%)';
+    suggestionsModal.style.width = '90%';
+    suggestionsModal.style.maxWidth = '500px';
+    suggestionsModal.style.background = 'white';
+    suggestionsModal.style.borderRadius = '15px';
+    suggestionsModal.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    suggestionsModal.style.zIndex = '1002';
+    suggestionsModal.style.overflow = 'hidden';
+    
+    suggestionsModal.innerHTML = `
+        <div style="background: linear-gradient(135deg, #ff6b00 0%, #ff8e00 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">🎯 Smart Suggestions</h3>
+            <button onclick="closeSuggestionsModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
+        </div>
+        <div style="padding: 25px; background: #f8f9fa;">
+            <div style="background: white; padding: 20px; border-radius: 10px;">
+                <div style="font-size: 14px; line-height: 1.6;">
+                    ${getSmartContextualSuggestions(prediction, formData)}
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="closeSuggestionsModal()" 
+                        style="background: #ff6b00; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Close function for this modal
+    window.closeSuggestionsModal = function() {
+        document.body.removeChild(suggestionsModal);
+        document.body.removeChild(overlay);
+    };
+    
+    // Close when clicking overlay
+    overlay.onclick = window.closeSuggestionsModal;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(suggestionsModal);
+}
+
+
+function showMoreInfo() {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '1001';
+    
+    const infoModal = document.createElement('div');
+    infoModal.style.position = 'fixed';
+    infoModal.style.top = '50%';
+    infoModal.style.left = '50%';
+    infoModal.style.transform = 'translate(-50%, -50%)';
+    infoModal.style.width = '90%';
+    infoModal.style.maxWidth = '500px';
+    infoModal.style.background = 'white';
+    infoModal.style.borderRadius = '15px';
+    infoModal.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    infoModal.style.zIndex = '1002';
+    infoModal.style.overflow = 'hidden';
+    
+    infoModal.innerHTML = `
+        <div style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">ℹ️ About This Application</h3>
+            <button onclick="closeInfoModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
+        </div>
+        <div style="padding: 25px; background: #f8f9fa;">
+            <div style="background: white; padding: 20px; border-radius: 10px;">
+                <p style="margin: 0 0 15px 0; line-height: 1.6; font-size: 14px;">
+                    <strong>🤖 AI-Powered Analysis:</strong> This academic advisor uses a Deep Neural Network model to predict student performance based on multiple academic parameters.
+                </p>
+                <p style="margin: 0 0 15px 0; line-height: 1.6; font-size: 14px;">
+                    <strong>🎯 Purpose:</strong> To provide data-driven insights and personalized suggestions for academic improvement.
+                </p>
+                <p style="margin: 0; line-height: 1.6; font-size: 14px;">
+                    <strong>📞 Contact:</strong> For further queries, connect with me on 
+                    <a href="https://www.linkedin.com/in/shaik-sheema-firdose/" target="_blank" style="color: #0077b5; text-decoration: none; font-weight: bold;">
+                        LinkedIn
+                    </a> for personalized guidance.
+                </p>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="closeInfoModal()" 
+                        style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Close function for this modal
+    window.closeInfoModal = function() {
+        document.body.removeChild(infoModal);
+        document.body.removeChild(overlay);
+    };
+    
+    // Close when clicking overlay
+    overlay.onclick = window.closeInfoModal;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(infoModal);
+}
+
+// Helper functions
+function getPerformanceMessage(prediction, formData) {
+    const cgpa = formData.total_cgpa || 'N/A';
+    const projects = formData.projects_internships || 'No';
+    
+    if (prediction.includes('Excellent')) {
+        return `Your CGPA of ${cgpa}/10 and ${projects === 'Yes' ? 'project experience' : 'academic performance'} demonstrate outstanding capabilities. Continue maintaining this excellence.`;
+    } else if (prediction.includes('Good')) {
+        return `Your current CGPA of ${cgpa}/10 shows good performance. ${projects === 'Yes' ? 'Your project experience is valuable.' : 'Consider working on projects to enhance skills.'}`;
+    } else if (prediction.includes('Average')) {
+        return `With a CGPA of ${cgpa}/10, there's room for improvement. Focus on consistent study habits and ${projects === 'Yes' ? 'leveraging your project experience' : 'building practical projects'}.`;
+    } else {
+        return `Your CGPA of ${cgpa}/10 indicates areas needing attention. ${projects === 'Yes' ? 'Your project work is positive.' : 'Start with basic project work.'} Focus on foundational improvements.`;
+    }
+}
+
+// NEW: Detailed summary function
+function getDetailedSummary(prediction, formData) {
+    const cgpa = formData.total_cgpa || 'N/A';
+    const attendance = formData.attendance || 'N/A';
+    const studyHours = formData.study_hours || 'N/A';
+    const backlogs = formData.backlogs || '0';
+    const projects = formData.projects_internships || 'No';
+    const competitions = formData.competitions || 'No';
+    const confidence = formData.confidence_level || 'N/A';
+    
+    let summary = `Your academic analysis shows <strong>${prediction}</strong> performance. `;
+    
+    // CGPA analysis
+    if (cgpa >= 8.5) {
+        summary += `Your excellent CGPA of <strong>${cgpa}/10</strong> is the primary factor for this prediction. `;
+    } else if (cgpa >= 7.0) {
+        summary += `Your good CGPA of <strong>${cgpa}/10</strong> contributes significantly to this prediction. `;
+    } else {
+        summary += `Your CGPA of <strong>${cgpa}/10</strong> is affecting your performance prediction. `;
+    }
+    
+    // Attendance analysis
+    if (attendance >= 90) {
+        summary += `Outstanding attendance (<strong>${attendance}%</strong>) demonstrates strong discipline. `;
+    } else if (attendance >= 80) {
+        summary += `Good attendance (<strong>${attendance}%</strong>) supports your academic consistency. `;
+    } else {
+        summary += `Attendance at <strong>${attendance}%</strong> needs improvement for better learning outcomes. `;
+    }
+    
+    // Study hours analysis
+    if (studyHours.includes('31+') || studyHours.includes('21-30')) {
+        summary += `Your study routine (<strong>${studyHours}</strong>) shows good commitment. `;
+    } else {
+        summary += `Limited study hours (<strong>${studyHours}</strong>) are impacting your performance. `;
+    }
+    
+    // Backlogs analysis
+    if (backlogs !== '0') {
+        summary += `<strong>${backlogs} backlog(s)</strong> are currently affecting your academic standing. `;
+    }
+    
+    // Extracurricular analysis
+    if (projects === 'Yes' || competitions === 'Yes') {
+        summary += `Your ${projects === 'Yes' ? 'project experience' : ''}${projects === 'Yes' && competitions === 'Yes' ? ' and ' : ''}${competitions === 'Yes' ? 'competition participation' : ''} add value to your profile. `;
+    }
+    
+    // Confidence analysis
+    if (confidence >= 8) {
+        summary += `High confidence level (<strong>${confidence}/10</strong>) is a positive asset. `;
+    }
+    
+    summary += `To ${prediction.includes('Excellent') ? 'maintain' : 'improve'} your performance, focus on the key areas highlighted in smart suggestions.`;
+    
+    return summary;
+}
+
+// NEW: Smart contextual suggestions function
+function getSmartContextualSuggestions(prediction, formData) {
+    const cgpa = parseFloat(formData.total_cgpa) || 0;
+    const attendance = parseInt(formData.attendance) || 0;
+    const studyHours = formData.study_hours || '';
+    const backlogs = formData.backlogs || '0';
+    const projects = formData.projects_internships || 'No';
+    const competitions = formData.competitions || 'No';
+    const confidence = parseInt(formData.confidence_level) || 5;
+    
+    let suggestions = [];
+    
+    // For Excellent prediction - maintenance suggestions
+    if (prediction.includes('Excellent')) {
+        suggestions.push('• <strong>Maintain Excellence:</strong> Continue your current study habits and consistency.');
+        if (projects === 'No') {
+            suggestions.push('• <strong>Explore Projects:</strong> Consider taking up advanced projects to enhance practical skills.');
+        }
+        if (competitions === 'No') {
+            suggestions.push('• <strong>Participate in Competitions:</strong> Challenge yourself with academic competitions.');
+        }
+        if (suggestions.length === 1) {
+            suggestions.push('• <strong>All Areas Strong:</strong> Your profile shows balanced excellence across all parameters.');
+        }
+    }
+    // For Good prediction - bridge to excellent
+    else if (prediction.includes('Good')) {
+        if (cgpa < 8.0) {
+            suggestions.push(`• <strong>CGPA Improvement:</strong> Focus on weak subjects to reach 8.0+ CGPA (Current: ${cgpa}/10).`);
+        }
+        if (attendance < 85) {
+            suggestions.push(`• <strong>Attendance Boost:</strong> Aim for 90%+ attendance (Current: ${attendance}%).`);
+        }
+        if (studyHours.includes('0-10') || studyHours.includes('11-20')) {
+            suggestions.push(`• <strong>Study Hours:</strong> Increase to 25+ hours weekly for better performance.`);
+        }
+        if (backlogs !== '0') {
+            suggestions.push(`• <strong>Backlog Clearance:</strong> Clear ${backlogs} backlog(s) to improve academic standing.`);
+        }
+        if (projects === 'No') {
+            suggestions.push('• <strong>Project Work:</strong> Start building projects to enhance practical skills.');
+        }
+    }
+    // For Average/Below Average - improvement focus
+    else {
+        suggestions.push(`• <strong>Study Routine:</strong> Establish consistent daily study schedule.`);
+        
+        if (cgpa < 7.0) {
+            suggestions.push(`• <strong>CGPA Focus:</strong> Priority should be improving CGPA from ${cgpa}/10 to 7.0+.`);
+        }
+        
+        if (attendance < 80) {
+            suggestions.push(`• <strong>Regular Attendance:</strong> Improve to 85%+ for better concept understanding.`);
+        }
+        
+        if (studyHours.includes('0-10')) {
+            suggestions.push(`• <strong>Study Commitment:</strong> Significantly increase study hours from minimal to 20+ weekly.`);
+        }
+        
+        if (backlogs !== '0') {
+            suggestions.push(`• <strong>Backlog Priority:</strong> Clear ${backlogs} backlog(s) as immediate priority.`);
+        }
+        
+        if (projects === 'No') {
+            suggestions.push('• <strong>Skill Development:</strong> Start with basic projects to build confidence.');
+        }
+        
+        if (confidence < 6) {
+            suggestions.push('• <strong>Confidence Building:</strong> Work on small achievements to build self-confidence.');
+        }
+    }
+    
+    // If no specific suggestions, add general one
+    if (suggestions.length === 0) {
+        suggestions.push('• <strong>Consistent Effort:</strong> Continue your current academic practices with focus on weak areas.');
+    }
+    
+    return suggestions.join('<br>');
+}
+function getSmartSuggestions(prediction, formData) {
+    let suggestions = [];
+    
+    if (formData.study_hours && formData.study_hours.includes('0-10')) {
+        suggestions.push('• <strong>Increase Study Hours:</strong> Current study time is minimal. Aim for 20+ hours weekly.');
+    }
+    
+    if (formData.backlogs && formData.backlogs !== '0') {
+        suggestions.push(`• <strong>Clear Backlogs:</strong> You have ${formData.backlogs} backlog(s). Prioritize clearance.`);
+    }
+    
+    if (formData.projects_internships === 'No') {
+        suggestions.push('• <strong>Build Projects:</strong> Start with 1-2 mini-projects to enhance practical skills.');
+    }
+    
+    if (formData.attendance && parseInt(formData.attendance) < 80) {
+        suggestions.push('• <strong>Improve Attendance:</strong> Aim for 85%+ attendance for better learning.');
+    }
+    
+    if (suggestions.length === 0) {
+        suggestions.push('• <strong>Maintain Consistency:</strong> Continue your current academic practices.');
+        suggestions.push('• <strong>Explore Advanced Topics:</strong> Consider learning additional skills.');
+    }
+    
+    return suggestions.join('<br>');
+}
+
+// Helper function to format suggestions professionally
+function formatProfessionalSuggestions(suggestions, studentData) {
+    let formatted = suggestions
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #4361ee;">$1</strong>')
+        .replace(/\n/g, '<br>')
+        .replace(/•/g, '•');
+    
+    // Add specific contextual messages based on data
+    let contextualMsg = '';
+    
+    if (studentData.study_hours === '5') {
+        contextualMsg += '<div style="background: #fff3e0; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 3px solid #ff9800;">';
+        contextualMsg += '<strong>📊 Study Hours Insight:</strong> Your current study hours (5 hrs/week) are below optimal. Increasing to 20-25 hours weekly can significantly improve academic performance.';
+        contextualMsg += '</div>';
+    }
+    
+    if (studentData.backlogs !== '0' && studentData.backlogs !== 'N/A') {
+        contextualMsg += '<div style="background: #ffebee; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 3px solid #f44336;">';
+        contextualMsg += `<strong>📚 Backlog Management:</strong> You have ${studentData.backlogs} backlog(s). Prioritize clearing these to improve your academic standing and focus on current subjects.`;
+        contextualMsg += '</div>';
+    }
+    
+    if (studentData.projects === 'No') {
+        contextualMsg += '<div style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 3px solid #4caf50;">';
+        contextualMsg += '<strong>💼 Skill Development:</strong> Consider working on projects to enhance practical skills and strengthen your portfolio for better career opportunities.';
+        contextualMsg += '</div>';
+    }
+    
+    return contextualMsg + formatted;
+}
+
+// Save form data before submission to use in suggestions
+document.getElementById('prediction-form').addEventListener('submit', function(e) {
+    // Save all form data to sessionStorage
+    const formData = new FormData(this);
+    for (let [key, value] of formData.entries()) {
+        sessionStorage.setItem(key, value);
+    }
 });
 </script>
 </body>
