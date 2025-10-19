@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, session, jsonify
 import numpy as np
 import pandas as pd
