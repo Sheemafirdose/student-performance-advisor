@@ -464,8 +464,7 @@ help_system = StudentHelpSystem()
 
 # ==================== YOUR EXISTING FLASK APP ====================
 app = Flask(__name__, template_folder='student_performance_dnn/templates')
-app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key_12345')
-app.config['SESSION_PERMANENT'] = False
+app.secret_key = 'your_secret_key_here'
 # KEEP ALL YOUR EXISTING CODE BELOW EXACTLY THE SAME
 
 # Load models with error handling
@@ -649,54 +648,33 @@ def home():
     return render_template('home.html')  # Show landing page first
 
 # ==================== SIMPLE SUGGESTION ROUTES ====================
-# ==================== SIMPLE SUGGESTION ROUTES ====================
-@app.route('/get_suggestions', methods=['POST'])
+#@app.route('/get_suggestions', methods=['POST'])
 def get_suggestions():
-    """Get personalized suggestions - FIXED FOR RENDER"""
+    """Get personalized suggestions - SIMPLE VERSION"""
     try:
-        print("🔍 DEBUG: Attempting to get suggestions...")
-        
-        # Method 1: Try session first
         student_data = session.get('student_data')
         
-        # Method 2: If session fails, use request data as backup
-        if not student_data:
-            request_data = request.get_json() or {}
-            print(f"🔍 DEBUG: No session data, using request: {request_data}")
-            
-            if request_data:
-                # Convert form data to proper format
-                student_data = {
-                    'total_cgpa': float(request_data.get('total_cgpa', 0)),
-                    'attendance': float(request_data.get('attendance', 0)),
-                    'study_hours': 5 if request_data.get('study_hours') == "0-10 (Minimal)" else 
-                                  15 if request_data.get('study_hours') == "11-20 (Moderate)" else 
-                                  25 if request_data.get('study_hours') == "21-30 (Regular)" else 
-                                  35 if request_data.get('study_hours') == "31+ (Intensive)" else 0,
-                    'backlogs': 0 if request_data.get('backlogs') == "0" else
-                               1 if request_data.get('backlogs') == "1" else
-                               2 if request_data.get('backlogs') == "2" else
-                               3 if request_data.get('backlogs') == "3" else
-                               4 if request_data.get('backlogs') == "4" else
-                               6 if request_data.get('backlogs') == "5+" else 0,
-                    'competitions': 1 if request_data.get('competitions') in ["Yes", "More than 2"] else 0,
-                    'projects_internships': 1 if request_data.get('projects_internships') in ["Yes", "More than 2"] else 0,
-                    'prevsem_cgpa': float(request_data.get('prevsem_cgpa', 0)),
-                    'confidence_level': int(request_data.get('confidence_level', 5)),
-                    'predicted_class': request_data.get('predicted_class', 'Average')
-                }
-                session['student_data'] = student_data
-                print("✅ DEBUG: Created student data from request")
+        # ========== ADD DEBUG LOGGING HERE ==========
+        print(f"🔍 DEBUG: Session keys: {list(session.keys())}")
+        print(f"🔍 DEBUG: Student data in session: {student_data}")
+        print(f"🔍 DEBUG: Session ID: {session.sid if hasattr(session, 'sid') else 'No session ID'}")
         
         if not student_data:
+            print("❌ DEBUG: No student data found in session!")
             return jsonify({
                 'success': False,
-                'message': 'Please fill out the form and click "Analyze Performance" first to get personalized suggestions.'
+                'message': 'Please fill out the form and analyze your performance first to get personalized suggestions.'
             })
         
-        # Generate advice
+        # Generate personalized advice using the advisor model
         predicted_class = student_data.get('predicted_class', 'Average')
+        print(f"🔍 DEBUG: Generating advice for class: {predicted_class}")
+        print(f"🔍 DEBUG: Student data details:")
+        for key, value in student_data.items():
+            print(f"  - {key}: {value}")
+        
         advice = advisor_model.generate_advice(student_data, predicted_class)
+        print(f"🔍 DEBUG: Advice generated successfully, length: {len(advice)}")
         
         return jsonify({
             'success': True,
@@ -705,9 +683,11 @@ def get_suggestions():
         
     except Exception as e:
         print(f"❌ SUGGESTIONS ERROR: {str(e)}")
+        import traceback
+        print(f"❌ TRACEBACK: {traceback.format_exc()}")
         return jsonify({
             'success': False,
-            'message': 'Error generating suggestions. Please try analyzing your performance first.'
+            'message': f'Error generating suggestions: {str(e)}'
         })
 
 @app.route('/get_quick_suggestions', methods=['POST'])
