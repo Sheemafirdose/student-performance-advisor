@@ -615,75 +615,68 @@
         <!-- RIGHT SIDE: Prediction Results -->
         <div class="result-section">
             <div class="prediction-panel">
-                {% if prediction_text %}
-                <div class="result-container show 
-                    {% if 'Below Average' in prediction_text %}result-needs-improvement
-                    {% elif 'Average' in prediction_text %}result-average
-                    {% elif 'Good' in prediction_text %}result-good
-                    {% elif 'Excellent' in prediction_text %}result-top
-                    {% endif %}">
-                    <div class="result-emoji">
-                        {% if 'Below Average' in prediction_text %}😟
-                        {% elif 'Average' in prediction_text %}🙂
-                        {% elif 'Good' in prediction_text %}😃
-                        {% elif 'Excellent' in prediction_text %}🚀
-                        {% endif %}
-                    </div>
-                    <div class="result-title">{{ prediction_text }}</div>
-                    
-                    {% if confidence_score %}
-                    <div class="confidence-score">
-                        <i class="fas fa-shield-alt"></i> Confidence: <strong>{{ "%.1f"|format(confidence_score) }}%</strong>
-                    </div>
-                    {% endif %}
-                    
-                    {% if probabilities %}
-                    <div class="probability-chart">
-                        <div class="probability-item below-avg">
-                            <div class="probability-label">Below Average</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Below Average']) }}%</div>
-                        </div>
-                        <div class="probability-item average">
-                            <div class="probability-label">Average</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Average']) }}%</div>
-                        </div>
-                        <div class="probability-item good">
-                            <div class="probability-label">Good</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Good']) }}%</div>
-                        </div>
-                        <div class="probability-item excellent">
-                            <div class="probability-label">Excellent</div>
-                            <div class="probability-value">{{ "%.1f"|format(probabilities['Excellent']) }}%</div>
-                        </div>
-                    </div>
-                    {% endif %}
+               {% if prediction_text %}
+<div class="result-container show 
+    {% if 'Below Average' in prediction_text %}result-needs-improvement
+    {% elif 'Average' in prediction_text %}result-average
+    {% elif 'Good' in prediction_text %}result-good
+    {% elif 'Excellent' in prediction_text %}result-top
+    {% endif %}">
+    <div class="result-emoji">
+        {% if 'Below Average' in prediction_text %}😟
+        {% elif 'Average' in prediction_text %}🙂
+        {% elif 'Good' in prediction_text %}😃
+        {% elif 'Excellent' in prediction_text %}🚀
+        {% endif %}
+    </div>
+    <div class="result-title">{{ prediction_text }}</div>
+    
+    <!-- Professional message for each class -->
+    <div class="confidence-score" style="font-size: 1.2rem; font-weight: 600; margin: 20px 0;">
+        {% if 'Below Average' in prediction_text %}
+📉 <strong>Needs Improvement — focus on your basics and stay consistent.</strong>
+{% elif 'Average' in prediction_text %}
+📊 <strong>Average — keep practicing and aim for steady growth.</strong>
+{% elif 'Good' in prediction_text %}
+⭐ <strong>Good — great effort, keep pushing toward excellence.</strong>
+{% elif 'Excellent' in prediction_text %}
+🏆 <strong>Excellent — outstanding work, maintain your performance.</strong>
+{% endif %}
 
-                    <!-- SUGGESTIONS BOX -->
-                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
-                        <button onclick="startSuggestionChat()" 
-                                style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-                                       color: white; 
-                                       border: none; 
-                                       padding: 15px 30px; 
-                                       border-radius: 25px; 
-                                       cursor: pointer;
-                                       font-size: 16px;
-                                       font-weight: bold;
-                                       box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-                                       transition: all 0.3s ease;">
-                            💬 Get Interactive Suggestions
-                        </button>
-                        <p style="margin-top: 10px; color: #6c757d; font-size: 14px;">
-                            Chat with our AI advisor for personalized academic guidance
-                        </p>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button type="button" class="btn btn-secondary" id="reset-btn-2">
-                            <i class="fas fa-redo"></i> Reset Form
-                        </button>
-                    </div>
-                </div>
+    </div>
+
+                     <!-- SUGGESTIONS BOX -->
+    <div style="text-align: center; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
+        <button onclick="startSuggestionChat()" 
+        style="background: linear-gradient(135deg, #4361ee 0%, #7209b7 100%); 
+               color: white; 
+               border: none; 
+               padding: 18px 35px; 
+               border-radius: 30px; 
+               cursor: pointer;
+               font-size: 17px;
+               font-weight: 700;
+               box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+               transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+               position: relative;
+               overflow: hidden;
+               letter-spacing: 0.5px;
+               text-transform: uppercase;"
+        onmouseover="this.style.transform='translateY(-6px) scale(1.05)'; this.style.boxShadow='0 12px 30px rgba(67, 97, 238, 0.6)'; this.style.background='linear-gradient(135deg, #3a56d4 0%, #5a08a1 100%)';"
+        onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(67, 97, 238, 0.4)'; this.style.background='linear-gradient(135deg, #4361ee 0%, #7209b7 100%)';">
+    💬 GET PERSONALIZED ADVICE
+    <!-- Animated gradient overlay -->
+    <span style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.8s;"></span>
+</button>
+        <p style="margin-top: 12px; color: #6c757d; font-size: 14px; font-weight: 500;">
+    Chat with AI advisor for personalized academic guidance
+</p>
+    </div>
+    
+    
+        </button>
+    </div>
+</div>
                 {% elif error_text %}
                 <div class="result-container show result-error">
                     <div class="result-emoji">⚠️</div>
@@ -1132,6 +1125,30 @@
     document.getElementById('chatInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') sendChatMessage();
     });
+    // Enhanced button hover effects
+function setupButtonEffects() {
+    const suggestionBtn = document.querySelector('button[onclick="startSuggestionChat()"]');
+    if (suggestionBtn) {
+        suggestionBtn.addEventListener('mouseenter', function() {
+            const shimmer = this.querySelector('span');
+            if (shimmer) {
+                shimmer.style.left = '100%';
+                setTimeout(() => {
+                    shimmer.style.transition = 'none';
+                    shimmer.style.left = '-100%';
+                    setTimeout(() => {
+                        shimmer.style.transition = 'left 0.8s';
+                    }, 50);
+                }, 800);
+            }
+        });
+    }
+}
+
+// Call this when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setupButtonEffects();
+});
 </script>
 </body>
 </html>
