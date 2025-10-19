@@ -8,7 +8,6 @@ import random
 import re
 from datetime import datetime
 from flask import redirect
-
 # ==================== STUDENT ADVISOR MODEL ====================
 class StudentAdvisorModel:
     def __init__(self):
@@ -369,26 +368,223 @@ class StudentAdvisorModel:
 # Initialize advisor model
 advisor_model = StudentAdvisorModel()
 
-# ==================== GET SUGGESTION BUTTONS SYSTEM ====================
-class SuggestionButtons:
+# ==================== CHAT ADVISOR ====================
+class ChatAdvisor:
     def __init__(self):
-        self.button_responses = self._build_button_responses()
+        self.conversations = {}
     
-    def get_quick_actions(self):
-        """Get quick action buttons for the bottom"""
-        return [
-            {'text': '📋 Get My Summary', 'query': 'summary'},
-            {'text': '📊 Academic Analysis', 'query': 'academic performance analysis'},
-            {'text': '🎯 Study Techniques', 'query': 'study techniques time management'},
-            {'text': '📖 Exam Preparation', 'query': 'exam preparation strategies'},
-            {'text': '💼 Career Guidance', 'query': 'career guidance placements'},
-            {'text': '😌 Mental Health', 'query': 'mental health motivation'},
-            {'text': '🌿 Campus Life', 'query': 'campus life balance'}
-        ]
+    def handle_message(self, session_id, user_message, student_data=None):
+        if session_id not in self.conversations:
+            self.conversations[session_id] = {
+                'step': 'greeting',
+                'name': None
+            }
+        
+        conv = self.conversations[session_id]
+        user_msg = user_message.strip()
+        
+        if conv['step'] == 'greeting':
+            conv['step'] = 'get_name'
+            return "Hello! I'm your academic advisor. What's your name?"
+        
+        elif conv['step'] == 'get_name':
+            if len(user_msg) < 2:
+                return "Please enter a valid name:"
+            conv['name'] = user_msg
+            conv['step'] = 'show_suggestions'
+            return f"Nice to meet you, {conv['name']}! I can analyze your academic data and provide personalized suggestions. Would you like me to do that? (yes/no)"
+        
+        elif conv['step'] == 'show_suggestions':
+            user_lower = user_msg.lower()
+            if any(word in user_lower for word in ['yes', 'yeah', 'sure', 'ok', 'yep']):
+                if student_data:
+                    # Generate advice using the main advisor model
+                    advice = advisor_model.generate_advice(student_data, student_data.get('predicted_class', 'Average'))
+                    conv['step'] = 'completed'
+                    return f"Great! Here are my personalized suggestions for you, {conv['name']}:\n\n{advice}"
+                else:
+                    return "I don't have your academic data. Please submit the form first."
+            elif any(word in user_lower for word in ['no', 'not', 'nope', 'later']):
+                conv['step'] = 'completed'
+                return f"No problem {conv['name']}! Feel free to ask anytime you need academic advice."
+            else:
+                return "Please answer with 'yes' or 'no'. Would you like personalized academic suggestions?"
+        
+        else:
+            # Handle any other messages
+            user_lower = user_msg.lower()
+            if any(word in user_lower for word in ['hi', 'hello', 'hey']):
+                return f"Hello again {conv['name']}! How can I help you?"
+            elif any(word in user_lower for word in ['thanks', 'thank you']):
+                return f"You're welcome {conv['name']}! Good luck with your studies! 🎓"
+            elif any(word in user_lower for word in ['help', 'suggestion', 'advice']):
+                return f"I can help with study techniques, time management, and academic planning. What specifically do you need, {conv['name']}?"
+            else:
+                return f"I'm here to help with academic suggestions, {conv['name']}. You can ask about study tips or specific improvements!"
+
+# Initialize chat advisor
+chat_advisor = ChatAdvisor()
+# ==================== COMPREHENSIVE HELP SYSTEM ====================
+class StudentHelpSystem:
+    def __init__(self):
+        self.knowledge_base = self._build_knowledge_base()
     
-    def _build_button_responses(self):
-        """Pre-defined content for each suggestion button"""
+    def _build_knowledge_base(self):
+        """Comprehensive educational knowledge base"""
         return {
+            'study_techniques': {
+                'pomodoro': "🎯 **Pomodoro Technique**: Study for 25 minutes, then take a 5-minute break. After 4 cycles, take a longer 15-30 minute break. This improves focus and prevents burnout.",
+                'active_recall': "🧠 **Active Recall**: Instead of re-reading, test yourself on the material. Use flashcards, practice questions, or teach the concepts to someone else.",
+                'spaced_repetition': "📅 **Spaced Repetition**: Review material at increasing intervals (1 day, 3 days, 1 week, 2 weeks). Use apps like Anki or create a revision schedule.",
+                'feynman': "💡 **Feynman Technique**: Choose a concept and explain it in simple terms as if teaching a child. Identify gaps in your understanding and simplify further."
+            },
+            
+            'time_management': {
+                'weekly_schedule': "⏰ **Weekly Schedule**: Create a timetable with fixed study slots. Include: 2-3 hours daily for core subjects, 1 hour for revisions, and regular breaks.",
+                'priority_matrix': "🎯 **Eisenhower Matrix**: Categorize tasks as: 1. Urgent & Important (do now), 2. Important but not urgent (schedule), 3. Urgent but not important (delegate), 4. Neither (eliminate).",
+                'productivity_tips': "🚀 **Productivity Tips**: Study during your peak energy hours, eliminate distractions (phone off), use the '2-minute rule' for small tasks, and track your progress weekly."
+            },
+            
+            'subject_specific': {
+                'programming': "💻 **Programming**: Practice daily on platforms like LeetCode/HackerRank. Build projects to apply concepts. Learn debugging techniques and version control with Git.",
+                'mathematics': "📐 **Mathematics**: Understand concepts before solving problems. Practice regularly, focus on weak areas, and review previous years' question papers.",
+                'theory_subjects': "📚 **Theory Subjects**: Create concise notes, use mind maps, teach concepts to others, and practice writing answers within time limits.",
+                'practical_labs': "🔬 **Practical Labs**: Prepare beforehand, understand the theory behind experiments, document properly, and analyze results critically."
+            },
+            
+            'exam_preparation': {
+                'revision_strategy': "📖 **Revision Strategy**: 3-phase approach: 1. Quick overview (2 weeks before), 2. Detailed study (1 week before), 3. Final revision (last 3 days).",
+                'time_management_exams': "⏱️ **Exam Time Management**: Divide time according to marks, attempt known questions first, keep last 15 minutes for review, and don't panic if stuck.",
+                'stress_management': "😌 **Exam Stress Relief**: Practice deep breathing, get 7-8 hours sleep, eat healthy, take short breaks, and maintain positive self-talk."
+            },
+            
+            'career_guidance': {
+                'higher_studies': "🎓 **Higher Studies**: Maintain 8.0+ CGPA, gain research experience, build strong relationships with professors for recommendations, and prepare for entrance exams early.",
+                'placements': "💼 **Placements**: Develop technical skills, build projects portfolio, practice communication skills, prepare for aptitude tests, and attend company presentations.",
+                'internships': "🏢 **Internships**: Start applying 3-4 months in advance, tailor your resume for each role, prepare for interviews, and treat internships as learning opportunities.",
+                'resume_building': "📄 **Resume Tips**: One-page format, action verbs, quantify achievements, include projects and skills, tailor for each application, and proofread carefully."
+            },
+            
+            'mental_health': {
+                'stress_management': "🌿 **Stress Management**: Regular exercise, 7-8 hours sleep, healthy diet, mindfulness meditation, and talking to friends/family.",
+                'motivation': "🔥 **Staying Motivated**: Set small achievable goals, track progress, reward yourself, find study partners, and remember your long-term vision.",
+                'burnout_prevention': "🛑 **Avoid Burnout**: Take regular breaks, maintain hobbies, set boundaries, get enough sleep, and don't compare yourself to others."
+            },
+            
+            'campus_life': {
+                'extracurricular': "🎭 **Extracurriculars**: Join clubs related to your interests, participate in college events, take leadership roles, and balance with academics.",
+                'networking': "🤝 **Networking**: Attend workshops, connect with seniors and professors, participate in tech communities, and build your LinkedIn profile.",
+                'time_balance': "⚖️ **Work-Life Balance**: Prioritize tasks, learn to say no, schedule fun activities, and maintain physical health alongside studies."
+            }
+        }
+    
+    def search_knowledge(self, query):
+        """Search the knowledge base for relevant information"""
+        query_lower = query.lower()
+        results = []
+        
+        # Search through all categories
+        for category, topics in self.knowledge_base.items():
+            for topic, content in topics.items():
+                if query_lower in topic.lower() or any(word in query_lower for word in topic.split()):
+                    results.append({
+                        'category': category.replace('_', ' ').title(),
+                        'topic': topic.replace('_', ' ').title(),
+                        'content': content
+                    })
+        
+        # Also search in content for broader matches
+        if not results:
+            for category, topics in self.knowledge_base.items():
+                for topic, content in topics.items():
+                    if any(word in query_lower for word in content.lower().split()[:20]):  # Check first few words
+                        results.append({
+                            'category': category.replace('_', ' ').title(),
+                            'topic': topic.replace('_', ' ').title(),
+                            'content': content
+                        })
+        
+        return results
+    
+    def get_help_categories(self):
+        """Get all available help categories"""
+        categories = {}
+        for category, topics in self.knowledge_base.items():
+            categories[category.replace('_', ' ').title()] = list(topics.keys())
+        return categories
+
+# Initialize help system
+help_system = StudentHelpSystem()
+# ==================== ENHANCED CHAT ADVISOR (FIXED FOR DATA CHECK) ====================
+# ==================== ENHANCED CHAT ADVISOR (SIMPLIFIED & FIXED) ====================
+class EnhancedChatAdvisor:
+    def __init__(self):
+        self.conversations = {}
+    
+    def generate_personalized_summary(self, student_data, name="Student"):
+        """Generate a personalized summary with user's actual data"""
+        analysis = advisor_model.analyze_student_profile(student_data)
+        
+        summary = f"📊 **Academic Summary for {name}**\n\n"
+        summary += "🎯 **Your Performance Overview:**\n"
+        summary += f"• **CGPA**: {student_data['total_cgpa']}/10\n"
+        summary += f"• **Attendance**: {student_data['attendance']}%\n"
+        summary += f"• **Study Hours**: {student_data['study_hours']} hrs/week\n"
+        summary += f"• **Backlogs**: {student_data['backlogs']}\n"
+        summary += f"• **Competitions**: {'Yes' if student_data['competitions'] else 'No'}\n"
+        summary += f"• **Projects/Internships**: {'Yes' if student_data['projects_internships'] else 'No'}\n"
+        summary += f"• **Confidence Level**: {student_data['confidence_level']}/10\n\n"
+        
+        if analysis['key_strengths']:
+            summary += "✅ **Your Strengths:**\n"
+            for strength in analysis['key_strengths'][:3]:
+                summary += f"• {strength}\n"
+            summary += "\n"
+        
+        if analysis['critical_areas']:
+            summary += "🎯 **Focus Areas for Improvement:**\n"
+            for area in analysis['critical_areas'][:3]:
+                summary += f"• {area}\n"
+            summary += "\n"
+        
+        summary += "💡 **Quick Action Plan:**\n"
+        cgpa = student_data['total_cgpa']
+        if cgpa < 8.0:
+            summary += f"• Target CGPA: 8.0+ (Current: {cgpa}/10)\n"
+        else:
+            summary += f"• Maintain your excellent CGPA of {cgpa}/10\n"
+        
+        attendance = student_data['attendance']
+        if attendance < 85:
+            summary += f"• Improve attendance to 90%+ (Current: {attendance}%)\n"
+        else:
+            summary += f"• Great attendance at {attendance}%\n"
+        
+        study_hours = student_data['study_hours']
+        if study_hours < 20:
+            summary += f"• Increase study hours to 25+/week (Current: {study_hours} hrs)\n"
+        else:
+            summary += f"• Good study routine of {study_hours} hrs/week\n"
+        
+        backlogs = student_data['backlogs']
+        if backlogs > 0:
+            summary += f"• Clear {backlogs} backlog(s) this semester\n"
+        else:
+            summary += "• No backlogs - excellent!\n"
+        
+        if student_data['competitions'] == 0:
+            summary += "• Participate in coding competitions\n"
+        if student_data['projects_internships'] == 0:
+            summary += "• Start building projects portfolio\n"
+        
+        summary += f"\n🎯 **Predicted Performance**: {student_data.get('predicted_class', 'Average')}\n"
+        summary += "🚀 **Next Level**: " + advisor_model._get_target_performance(student_data.get('predicted_class', 'Average'))
+        
+        return summary
+    
+    def get_category_response(self, category):
+        """Get detailed responses for each main category"""
+        responses = {
             'summary': "summary",
             'academic performance analysis': """
 📊 **Academic Performance Analysis & Improvement**
@@ -467,79 +663,218 @@ class SuggestionButtons:
 • Maintain work-life balance
 """
         }
+        return responses.get(category.lower(), "I can help you with that! Please ask more specifically.")
     
-    def get_button_response(self, query):
-        """Get the pre-written content for a button query"""
-        return self.button_responses.get(query.lower(), "I can help you with that topic!")
+    def get_quick_actions(self):
+        """Get quick action buttons for the bottom"""
+        return [
+            {'text': '📋 Get My Summary', 'query': 'summary'},
+            {'text': '📊 Academic Analysis', 'query': 'academic performance analysis'},
+            {'text': '🎯 Study Techniques', 'query': 'study techniques time management'},
+            {'text': '📖 Exam Preparation', 'query': 'exam preparation strategies'},
+            {'text': '💼 Career Guidance', 'query': 'career guidance placements'},
+            {'text': '😌 Mental Health', 'query': 'mental health motivation'},
+            {'text': '🌿 Campus Life', 'query': 'campus life balance'}
+        ]
 
-# Initialize suggestion buttons system
-suggestion_buttons = SuggestionButtons()
-
-# ==================== BOT SYSTEM (COMMENTED FOR NOW) ====================
-'''
-class ChatAdvisor:
-    def __init__(self):
-        self.conversations = {}
-    
     def handle_message(self, session_id, user_message, student_data=None):
-        # BOT LOGIC HERE - COMMENTED FOR NOW
-        pass
-
-class EnhancedChatAdvisor:
-    def __init__(self):
-        self.conversations = {}
-    
-    def handle_message(self, session_id, user_message, student_data=None):
-        # ENHANCED BOT LOGIC HERE - COMMENTED FOR NOW
-        pass
-
-# Initialize chat advisors (COMMENTED)
-# chat_advisor = ChatAdvisor()
-# chat_advisor = EnhancedChatAdvisor()
-'''
-
-# ==================== COMPREHENSIVE HELP SYSTEM ====================
-class StudentHelpSystem:
-    def __init__(self):
-        self.knowledge_base = self._build_knowledge_base()
-    
-    def _build_knowledge_base(self):
-        """Comprehensive educational knowledge base"""
-        return {
-            'study_techniques': {
-                'pomodoro': "🎯 **Pomodoro Technique**: Study for 25 minutes, then take a 5-minute break. After 4 cycles, take a longer 15-30 minute break. This improves focus and prevents burnout.",
-                'active_recall': "🧠 **Active Recall**: Instead of re-reading, test yourself on the material. Use flashcards, practice questions, or teach the concepts to someone else.",
-                'spaced_repetition': "📅 **Spaced Repetition**: Review material at increasing intervals (1 day, 3 days, 1 week, 2 weeks). Use apps like Anki or create a revision schedule.",
-                'feynman': "💡 **Feynman Technique**: Choose a concept and explain it in simple terms as if teaching a child. Identify gaps in your understanding and simplify further."
-            },
-            
-            'time_management': {
-                'weekly_schedule': "⏰ **Weekly Schedule**: Create a timetable with fixed study slots. Include: 2-3 hours daily for core subjects, 1 hour for revisions, and regular breaks.",
-                'priority_matrix': "🎯 **Eisenhower Matrix**: Categorize tasks as: 1. Urgent & Important (do now), 2. Important but not urgent (schedule), 3. Urgent but not important (delegate), 4. Neither (eliminate).",
-                'productivity_tips': "🚀 **Productivity Tips**: Study during your peak energy hours, eliminate distractions (phone off), use the '2-minute rule' for small tasks, and track your progress weekly."
+        # Initialize conversation if not exists
+        if session_id not in self.conversations:
+            self.conversations[session_id] = {
+                'step': 'greeting',
+                'name': None
             }
-        }
-    
-    def search_knowledge(self, query):
-        """Search the knowledge base for relevant information"""
-        query_lower = query.lower()
-        results = []
-        
-        # Search through all categories
-        for category, topics in self.knowledge_base.items():
-            for topic, content in topics.items():
-                if query_lower in topic.lower() or any(word in query_lower for word in topic.split()):
-                    results.append({
-                        'category': category.replace('_', ' ').title(),
-                        'topic': topic.replace('_', ' ').title(),
-                        'content': content
-                    })
-        
-        return results
 
-# Initialize help system
-help_system = StudentHelpSystem()
+        conv = self.conversations[session_id]
+        user_msg = user_message.strip()
+        user_lower = user_msg.lower()
+        
+        # ========== FIRST CHANGE: NORMAL CONVERSATIONAL BOT ==========
+        # Handle normal conversation - how to use, what, where, fields, doubts
+        if any(word in user_lower for word in ['hi', 'hello', 'hey', 'greetings']):
+            return "Hello! I'm your academic advisor. How can I help you today?"
+        
+        if any(word in user_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end chat']):
+            name = conv.get('name', 'Student')
+            return f"Goodbye {name}! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓"
+        
+        if any(word in user_lower for word in ['thanks', 'thank you']):
+            return "You're welcome! Happy to help! 😊"
+        
+        # How to use, what, where, fields, doubts
+        if any(word in user_lower for word in ['how to use', 'how use', 'how this works']):
+            return "I'm an academic advisor bot. You can ask me about:\n• Study techniques\n• Time management\n• Subject-specific strategies\n• Exam preparation\n• Career guidance\n• Mental health tips\n• Campus life balance\n\nJust ask your question!"
+        
+        if any(word in user_lower for word in ['what', 'what is']):
+            if 'cgpa' in user_lower:
+                return "📊 **CGPA** - Cumulative Grade Point Average (0-10 scale) shows your overall academic performance."
+            elif 'attendance' in user_lower:
+                return "📅 **Attendance** - Your class attendance percentage. 85%+ is recommended for better learning."
+            elif 'study hours' in user_lower:
+                return "⏰ **Study Hours** - Weekly study time outside class. 25+ hours is optimal for good performance."
+            elif 'backlog' in user_lower:
+                return "🔧 **Backlogs** - Subjects pending clearance. Zero backlogs is ideal for academic progress."
+            elif 'competition' in user_lower:
+                return "🏆 **Competitions** - Participation in coding/hackathon events shows practical skills."
+            elif 'project' in user_lower or 'internship' in user_lower:
+                return "💼 **Projects/Internships** - Hands-on experience valuable for placements and higher studies."
+            elif 'confidence' in user_lower:
+                return "💪 **Confidence Level** - Self-assessment of your academic confidence (1-10 scale)."
+            else:
+                return "I can explain academic terms like CGPA, attendance, study hours, backlogs, competitions, projects, and confidence levels. What would you like to know?"
+        
+        if any(word in user_lower for word in ['where', 'where to']):
+            if 'study' in user_lower:
+                return "📚 **Where to study**: Library, quiet classroom, study room, or any distraction-free environment that works for you!"
+            elif 'help' in user_lower:
+                return "🆘 **Where to get help**: Faculty during office hours, college counseling center, study groups, online forums, or academic support services."
+            else:
+                return "I can guide you on where to study, where to get academic help, where to find resources, etc. What specifically?"
+        
+        if any(word in user_lower for word in ['doubt', 'question', 'confused']):
+            return "I can help clarify doubts about:\n• Study techniques\n• Time management\n• Exam preparation\n• Career choices\n• Subject-specific questions\n• Academic planning\n\nWhat's your specific doubt?"
+        
+        # ========== SECOND CHANGE: IF USER ASKS DIFFERENT QUESTIONS ==========
+        # Check if the question matches our knowledge base keywords
+        knowledge_keywords = [
+            'study', 'technique', 'time', 'management', 'exam', 'preparation', 
+            'career', 'placement', 'mental', 'health', 'motivation', 'campus',
+            'cgpa', 'attendance', 'backlog', 'project', 'internship', 'confidence',
+            'academic', 'performance', 'analysis', 'summary'
+        ]
+        
+        # If user asks something completely different from our knowledge base
+        if not any(keyword in user_lower for keyword in knowledge_keywords):
+            return "Good answer! I'm here to help with academic advice whenever you need it. 😊"
+        
+        # ========== REST OF THE ORIGINAL CODE (UNCHANGED) ==========
+        # Check if student_data exists and has valid prediction data
+        has_student_data = False
+        if student_data and isinstance(student_data, dict):
+            # Check if we have predicted_class (which means form was submitted and predictions generated)
+            has_prediction_result = 'predicted_class' in student_data and student_data['predicted_class'] is not None
+            
+            # Check if we have the essential academic data
+            has_academic_data = ('total_cgpa' in student_data and 
+                               student_data.get('total_cgpa') is not None and
+                               student_data.get('total_cgpa') != '')
+            
+            has_student_data = has_prediction_result or has_academic_data
 
+        print(f"DEBUG: has_student_data = {has_student_data}")
+        if student_data:
+            print(f"DEBUG: student_data keys = {student_data.keys()}")
+            print(f"DEBUG: predicted_class = {student_data.get('predicted_class')}")
+            print(f"DEBUG: total_cgpa = {student_data.get('total_cgpa')}")
+
+        # ========== USER HAS DATA - SHOW PERSONALIZED SUGGESTIONS ==========
+        if has_student_data:
+            # Check for category-specific queries
+            category_responses = {
+                'academic performance analysis': self.get_category_response('academic performance analysis'),
+                'study techniques time management': self.get_category_response('study techniques time management'),
+                'exam preparation strategies': self.get_category_response('exam preparation strategies'),
+                'career guidance placements': self.get_category_response('career guidance placements'),
+                'mental health motivation': self.get_category_response('mental health motivation'),
+                'campus life balance': self.get_category_response('campus life balance')
+            }
+            
+            for category, response in category_responses.items():
+                if any(word in user_lower for word in category.split()):
+                    return response
+            
+            # Handle summary request
+            if any(word in user_lower for word in ['summary', 'my details', 'my profile', 'table', 'overview']):
+                name = conv.get('name', 'Student')
+                return self.generate_personalized_summary(student_data, name)
+            
+            # NORMAL CONVERSATION FLOW (user has data)
+            if conv['step'] == 'greeting':
+                conv['step'] = 'get_name'
+                return "🎉 Hello! I'm your academic advisor. I can see you have your academic performance results ready! What's your name?"
+            
+            elif conv['step'] == 'get_name':
+                if len(user_msg) < 2:
+                    return "Please enter a valid name:"
+                conv['name'] = user_msg
+                conv['step'] = 'show_options'
+                return f"Nice to meet you, {conv['name']}! ✅ I have analyzed your academic data. Would you like me to provide personalized suggestions based on your '{student_data.get('predicted_class', 'Average')}' performance? (yes/no)"
+            
+            elif conv['step'] == 'show_options':
+                if any(word in user_lower for word in ['yes', 'yeah', 'sure', 'ok', 'yep']):
+                    # Generate personalized advice
+                    advice = advisor_model.generate_advice(student_data, student_data.get('predicted_class', 'Average'))
+                    conv['step'] = 'completed'
+                    return f"Great! Here are my personalized suggestions for you, {conv['name']}:\n\n{advice}"
+                elif any(word in user_lower for word in ['no', 'not', 'nope', 'later']):
+                    conv['step'] = 'completed'
+                    return f"No problem {conv['name']}! Feel free to ask me about study tips anytime, or use the quick action buttons below for specific advice."
+                else:
+                    return "Please answer with 'yes' or 'no'. Would you like personalized academic suggestions based on your data?"
+            
+            elif conv['step'] == 'completed':
+                # Search knowledge base for academic queries
+                results = help_system.search_knowledge(user_msg)
+                if results:
+                    response = f"Here's what I found about '{user_msg}':\n\n"
+                    for i, result in enumerate(results[:2]):
+                        response += f"**{result['topic']}** ({result['category']})\n"
+                        response += f"{result['content']}\n\n"
+                    return response
+                else:
+                    return f"I'm here to help with academic suggestions, {conv['name']}! You can ask about study tips or use the quick action buttons for specific advice!"
+            
+            else:
+                return f"I'm here to help with academic suggestions, {conv['name']}! You can ask about study tips or use the quick action buttons for specific advice!"
+
+        # ========== USER HAS NO DATA - ASK TO FILL FORM FIRST ==========
+        else:
+            # NO DATA - Show message to fill form first
+            if conv['step'] == 'greeting':
+                conv['step'] = 'get_name'
+                return "👋 Hello! I'm your AI Academic Advisor. To get started, please fill out the form on the left side and click 'Analyze Performance' to get your predictions first. Then I can provide personalized suggestions! What's your name?"
+            
+            elif conv['step'] == 'get_name':
+                if len(user_msg) < 2:
+                    return "Please enter a valid name:"
+                conv['name'] = user_msg
+                conv['step'] = 'show_options'
+                return f"Nice to meet you, {conv['name']}! 📊 **Important:** Please fill out the form on the left side first and click 'Analyze Performance' to get your predictions. Once you have your results, I can provide personalized academic suggestions! For now, I can help with general study advice. What would you like to know?"
+
+            elif conv['step'] == 'show_options':
+                # No data available - guide user to fill form
+                if any(word in user_lower for word in ['form', 'fill', 'data', 'predict', 'analysis']):
+                    return f"📝 **Form Instructions:**\n1. Fill all fields in the form on the left\n2. Click 'Analyze Performance' button\n3. Get your prediction results\n4. Then I can provide personalized suggestions!\n\nWhat specific field do you need help understanding, {conv['name']}?"
+                elif any(word in user_lower for word in ['cgpa', 'gpa', 'grade']):
+                    return "📊 **CGPA Explanation:** Your Cumulative Grade Point Average (0-10 scale) shows your overall academic performance. Higher CGPA (8.0+) indicates strong academic foundation."
+                elif any(word in user_lower for word in ['attendance']):
+                    return "📅 **Attendance:** Regular attendance (85%+) ensures you don't miss important concepts and maintains good faculty rapport."
+                elif any(word in user_lower for word in ['study', 'hours']):
+                    return "⏰ **Study Hours:** Weekly study time. 25+ hours is optimal for good academic performance."
+                elif any(word in user_lower for word in ['backlog', 'arrear']):
+                    return "🔧 **Backlogs:** Number of subjects pending clearance. Zero backlogs is ideal for academic progress."
+                elif any(word in user_lower for word in ['competition', 'project', 'internship']):
+                    return "🚀 **Competitions/Projects:** Participation shows practical skills and initiative. Valuable for placements and higher studies."
+                elif any(word in user_lower for word in ['confidence']):
+                    return "💪 **Confidence Level:** Self-assessment of your academic confidence (1-10). Higher confidence often correlates with better performance."
+                else:
+                    # If user asks something different, use the "Good answer" response
+                    return "Good answer! I'm here to help with academic advice whenever you need it. 😊"
+            
+            else:
+                # Handle general queries without data
+                if any(word in user_lower for word in ['hi', 'hello', 'hey']):
+                    return f"Hello again {conv['name']}! Remember to fill the form first to get personalized advice. How can I help?"
+                elif any(word in user_lower for word in ['thanks', 'thank you']):
+                    return f"You're welcome {conv['name']}! Good luck with your studies! 🎓"
+                elif any(word in user_lower for word in ['help', 'suggestion', 'advice']):
+                    return f"📊 **First Step Needed:** Please fill out the form on the left side and click 'Analyze Performance' to get your predictions. Then I can provide personalized academic suggestions! What specific help do you need with the form, {conv['name']}?"
+                else:
+                    # If user asks something different, use the "Good answer" response
+                    return "Good answer! I'm here to help with academic advice whenever you need it. 😊"
+
+# Replace the existing chat advisor with the fixed version
+chat_advisor = EnhancedChatAdvisor()
 # ==================== YOUR EXISTING FLASK APP ====================
 app = Flask(__name__, template_folder='student_performance_dnn/templates')
 app.secret_key = 'your_secret_key_here'
@@ -587,6 +922,9 @@ def fix_excellent_good_confusion(predicted_class, confidence, features_dict, pro
     
     return predicted_class
 
+
+
+    
 @app.route('/app', methods=['GET', 'POST'])
 def main_app():   
     prediction_text = None
@@ -718,41 +1056,56 @@ def main_app():
 def home():
     return render_template('home.html')  # Show landing page first
 
-# ==================== SUGGESTION BUTTONS ROUTES ====================
-@app.route('/get_suggestions', methods=['GET'])
-def get_suggestions():
-    """Get all suggestion buttons"""
-    buttons = suggestion_buttons.get_quick_actions()
-    return jsonify({'suggestions': buttons})
-
-@app.route('/handle_suggestion', methods=['POST'])
-def handle_suggestion():
-    """Handle suggestion button clicks"""
-    try:
-        query = request.json.get('query', '')
-        response = suggestion_buttons.get_button_response(query)
-        return jsonify({'response': response})
-    except Exception as e:
-        return jsonify({'response': f"Error: {str(e)}"})
-
-# ==================== BOT ROUTES (COMMENTED FOR NOW) ====================
-'''
+# ==================== NEW CHAT ROUTES ====================
 @app.route('/start_chat', methods=['POST'])
 def start_chat():
-    # BOT START CHAT LOGIC - COMMENTED
-    pass
+    try:
+        session_id = request.json.get('session_id', 'default')
+        student_data = session.get('student_data')
+        
+        print(f"CHAT DEBUG: Starting chat for session {session_id}")
+        print(f"CHAT DEBUG: Student data available: {bool(student_data)}")
+        
+        # AUTO-RESET: If we have new student data, reset the conversation
+        if student_data and session_id in chat_advisor.conversations:
+            # Keep only the name if it exists, reset everything else
+            old_name = chat_advisor.conversations[session_id].get('name')
+            chat_advisor.conversations[session_id] = {
+                'step': 'greeting',
+                'name': old_name,
+                'awaiting_topic': False
+            }
+        
+        response = chat_advisor.handle_message(session_id, "", student_data)
+        return jsonify({'response': response})
+    except Exception as e:
+        print(f"CHAT ERROR: {str(e)}")
+        return jsonify({'response': f"I'm having trouble starting the chat. Please try again. Error: {str(e)}"})
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    # BOT SEND MESSAGE LOGIC - COMMENTED
-    pass
+    try:
+        session_id = request.json.get('session_id', 'default')
+        user_message = request.json.get('message', '')
+        student_data = session.get('student_data')
+        
+        print(f"CHAT DEBUG: Message from {session_id}: {user_message}")
+        print(f"CHAT DEBUG: Student data: {student_data}")
+        
+        response = chat_advisor.handle_message(session_id, user_message, student_data)
+        return jsonify({'response': response})
+    except Exception as e:
+        print(f"CHAT ERROR: {str(e)}")
+        return jsonify({'response': "Sorry, I encountered an error. Please try again."})
 
 @app.route('/reset_chat', methods=['POST'])
 def reset_chat():
-    # BOT RESET LOGIC - COMMENTED
-    pass
-'''
+    session_id = request.json.get('session_id', 'default')
+    if session_id in chat_advisor.conversations:
+        del chat_advisor.conversations[session_id]
+    return jsonify({'status': 'success'})
 
+# ==================== CRITICAL FIX: ADD CLEAR SESSION ROUTE ====================
 @app.route('/clear_session', methods=['POST'])
 def clear_session():
     """Clear session data"""
