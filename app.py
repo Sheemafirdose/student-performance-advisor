@@ -900,26 +900,421 @@ def search_help():
             'message': f'Error searching help: {str(e)}'
         })
 
-# ==================== FALLBACK CHAT ROUTES ====================
-@app.route('/start_chat', methods=['POST'])
-def start_chat():
-    """Fallback for chatbot - redirect to suggestions"""
+# ==================== GENERAL ACADEMIC ADVISOR BOT ====================
+class AcademicAdvisorBot:
+    def __init__(self):
+        self.web_options = self._build_web_options()
+        self.general_responses = self._build_general_responses()
+        self.knowledge_base = self._build_knowledge_base()
+    
+    def _build_knowledge_base(self):
+        """Comprehensive knowledge base for academic, career, and general student queries"""
+        return {
+            'greeting': {
+                'keywords': ['hi', 'hello', 'hey', 'hlo', 'hola', 'good morning', 'good afternoon', 'good evening'],
+                'content': "👋 Hello there! I'm your AI Academic Advisor, here to guide you on study, time management, and career planning 🎓\n\nWhat would you like help with today?"
+            },
+            
+            'who_are_you': {
+                'keywords': ['who are you', 'who r u', 'your name', 'what is your name', 'what are you'],
+                'content': "🤖 I'm your virtual **Academic Advisor Bot** built to help you perform better in studies through personalized guidance. I can help with study tips, exam prep, career advice, and more! 💡"
+            },
+            
+            'how_are_you': {
+                'keywords': ['how are you', 'how r u', 'how you doing', 'how is it going'],
+                'content': "😊 I'm always great when students like you come to learn! How about you today? What academic topic can I help you with?"
+            },
+            
+            'thanks': {
+                'keywords': ['thank', 'thanks', 'thank you', 'thankyou', 'good job', 'awesome', 'great'],
+                'content': "😊 You're welcome! Always happy to help 🎯\n\nKeep learning and growing! What else can I assist you with?"
+            },
+            
+            'motivation': {
+                'keywords': ['motivate', 'motivation', 'lazy', 'bored', 'tired', 'demotivated'],
+                'content': "💪 Remember, even small progress is still progress 🌟\n\nDon't give up — your efforts are shaping your success! What specific area do you want to work on?"
+            },
+            
+            'stress': {
+                'keywords': ['stress', 'sad', 'anxiety', 'pressure', 'tension', 'burnout', 'mental health'],
+                'content': "🧘 It's okay to feel that way 💙 Take a short break, hydrate, or walk a bit.\n\nYour mental health matters — balance study with rest. I can share stress relief tips if you'd like!"
+            },
+            
+            'creator': {
+                'keywords': ['who made you', 'developer', 'creator', 'who built you', 'your purpose', 'why created'],
+                'content': "💡 I was developed by **Shaik Sheema Firdose** 👩‍💻 as part of the *AI Student Performance Advisor Project*.\n\nMy goal is to make learning smarter and more personalized through AI insights!"
+            },
+            
+            'whats_up': {
+                'keywords': ['tell me something', 'what’s up', 'whatsup', 'wyd', 'sup'],
+                'content': "💡 Here's something interesting: studying 25 minutes followed by a 5-minute break boosts memory retention by 30%! 🧠\n\nWant to learn more study techniques?"
+            },
+            
+            'goodbye': {
+                'keywords': ['bye', 'goodbye', 'good night', 'see you', 'exit', 'quit'],
+                'content': "🌙 Goodbye! 👋 Keep learning and stay motivated — your best is yet to come 🌟\n\nCome back anytime for more guidance! 🎓"
+            },
+
+            'study_techniques': {
+                'keywords': ['study', 'learn', 'method', 'technique', 'pomodoro', 'recall', 'repetition', 'feynman', 'memory', 'concentration'],
+                'content': """
+    **📚 Effective Study Techniques:**
+
+    🎯 **Pomodoro Technique**: 25min study + 5min break (4 cycles) then 15-30min long break
+    🧠 **Active Recall**: Test yourself instead of passive reading
+    📅 **Spaced Repetition**: Review at intervals: 1 day, 3 days, 1 week, 2 weeks
+    💡 **Feynman Technique**: Explain concepts simply as if teaching a child
+    """
+            },
+
+            'time_management': {
+                'keywords': ['time', 'schedule', 'manage', 'productivity', 'routine', 'planning', 'procrastination', 'deadline'],
+                'content': """
+    **⏰ Time Management Strategies:**
+
+    • Create weekly study schedule with fixed slots
+    • Study during peak energy hours
+    • Eliminate distractions - phone off, quiet space
+    • Use 2-minute rule for small tasks
+    • Take regular breaks to avoid burnout
+    """
+            },
+
+            'exam_preparation': {
+                'keywords': ['exam', 'test', 'preparation', 'revision', 'study plan', 'mock test', 'final', 'semester'],
+                'content': """
+    **📖 Exam Preparation Guide:**
+
+    **4 Weeks Before:** Complete syllabus, create notes
+    **2 Weeks Before:** Solve past papers, mock tests  
+    **Last Week:** Quick revision, formula practice
+    """
+            },
+
+            'career_guidance': {
+                'keywords': ['career', 'job', 'placement', 'internship', 'resume', 'interview', 'portfolio'],
+                'content': """
+    **💼 Career Preparation:**
+
+    **Technical Skills:** DSA, programming, DBMS
+    **Projects:** Build portfolio, GitHub
+    **Soft Skills:** Communication, interview prep
+    """
+            },
+
+            'mental_health': {
+                'keywords': ['stress', 'motivation', 'confidence', 'burnout', 'mental health', 'anxiety'],
+                'content': """
+    **😌 Mental Health & Wellness:**
+
+    • Exercise, 7-8 hours sleep, healthy diet
+    • Mindfulness meditation
+    • Talk to friends/family
+    • Take breaks and pursue hobbies
+    """
+            },
+
+            'subject_help': {
+                'keywords': ['programming', 'coding', 'mathematics', 'maths', 'physics', 'chemistry', 'theory'],
+                'content': """
+    **📖 Subject-Specific Help:**
+
+    **Programming:** Practice daily, build projects
+    **Mathematics:** Understand concepts, practice variety  
+    **Theory:** Concise notes, mind maps, revision
+    """
+            },
+
+            'general_academic': {
+                'keywords': ['cgpa', 'grades', 'attendance', 'backlog', 'assignment', 'project'],
+                'content': """
+    **🎓 General Academic Success:**
+
+    • Maintain attendance (85%+)
+    • Regular study routine (20-25h/week)
+    • Complete assignments on time
+    • Seek help when needed
+    """
+            }
+        }
+
+    def _search_knowledge_base(self, query):
+        """Search knowledge base for matching academic or general topics"""
+        query_lower = query.lower()
+        
+        # Search through all knowledge base categories
+        for category, data in self.knowledge_base.items():
+            for keyword in data['keywords']:
+                if keyword in query_lower:
+                    return data['content']
+        
+        # Default fallback for anything else
+        return "🤖 I'm here to help with academic topics like study techniques, exam preparation, career guidance, and time management. Try asking about these or use the quick options below!"
+        
+    def _build_web_options(self):
+        """Web options for quick selection"""
+        return {
+            'about_application': {
+                'title': '🎓 About This Application',
+                'content': """
+**AI Student Performance Predictor**
+
+Our advanced AI system analyzes your study patterns, academic history, and learning behaviors to provide personalized insights and actionable recommendations for academic excellence.
+
+**Key Features:**
+• Smart Predictions using Advanced Deep Neural Networks (DNN) algorithm
+• Performance Analytics with detailed insights  
+• Personalized Guidance with customized study plans
+• AI-Powered academic advisor for ongoing support
+
+**Technology:** Leveraging sophisticated Deep Neural Networks to deliver precise performance predictions.
+"""
+            },
+            'how_to_use': {
+                'title': '📝 How To Use This System',
+                'content': """
+**Step-by-Step Guide:**
+1. **Fill the Form** - Enter your academic details carefully:
+
+   • **Total CGPA** - Enter your cumulative score (e.g., 8.9)
+   • **Previous Semester CGPA** - Your last semester score (e.g., 8.5)  
+   • **Attendance Percentage** - Your overall attendance (e.g., 89)
+   • **Weekly Study Hours** - Select your study pattern from dropdown
+   • **Number of Backlogs** - Choose from available options
+   • **Competition Participation** - Select your participation level
+   • **Projects/Internships** - Select your experience level
+   • **Study Confidence Level** - Rate your confidence (1-10)
+
+**Note:** Please fill all fields accurately for best results!
+
+
+2. **Get Prediction** - Click "Analyze Performance" to see your AI-predicted performance category
+
+3. **Get Suggestions** - Click "GET PERSONALIZED ADVICE" for detailed improvement strategies
+
+4. **Chat with Advisor** - Use this chat for any academic questions!
+"""
+            },
+            'input_guidance': {
+                'title': '📊 How to Fill Input Fields',
+                'content': """
+**Field-by-Field Guidance:**
+
+ • **Total CGPA**: Your cumulative grade point average (Example: 8.9)
+   • **Previous Semester CGPA**: Most recent semester's CGPA (Example: 8.5)
+   • **Attendance Percentage**: Overall class attendance (Example: 89)
+   • **Weekly Study Hours**: Average hours spent studying per week
+   • **Number of Backlogs**: Subjects requiring repetition/clearance
+   • **Competition Participation**: Any academic/coding competitions
+   • **Projects/Internships**: Any practical experience gained
+   • **Study Confidence Level**: Self-assessment of confidence (1-10 scale)
+
+**Tip:** Fill in correct format and be honest for best results!
+"""
+            },
+            'about_developer': {
+                'title': '👨‍💻 About the Developer',
+                'content': """
+**Developed by Seema**
+
+**Contact Details:**
+• LinkedIn: https://www.linkedin.com/in/shaik-sheema-firdose/
+• Email: [sheemafirdose1311@gmail.com]
+
+**About the Development:**
+This AI Student Performance Predictor is designed to help students achieve academic excellence through data-driven insights and personalized guidance using advanced machine learning technologies.
+
+**Mission:** Empower students with AI-powered academic insights for better learning outcomes and career success.
+"""
+            }
+        }
+    
+    def _build_general_responses(self):
+        """General responses for common queries"""
+        return {
+            'greeting': "🎓 Hello! I'm your Academic Advisor. I can help you with study tips, exam preparation, career guidance, time management, mental wellness, and any other academic questions! What would you like to know?",
+            'help': "I can help you with:\n• Study techniques & learning methods\n• Exam preparation strategies\n• Career guidance & placements\n• Time management & productivity\n• Mental health & stress management\n• Subject-specific help\n• Campus resources\n• General academic success tips\n\nYou can also use the quick options below!",
+            'default': "I'm here to help with any academic questions! You can ask me about study techniques, exam preparation, career guidance, time management, or any other academic topics. Try being more specific or use the quick options below!",
+            'farewell': "Goodbye! 🎓 Come back anytime for academic advice. Remember to use the main form to get personalized performance analysis and suggestions!",
+            'knowledge_not_found': "I'm not sure about that specific topic, but I can help you with:\n\n• Study techniques and learning methods\n• Exam preparation strategies\n• Career guidance and placements\n• Time management and productivity\n• Mental health and stress management\n• Subject-specific help\n• Campus resources and academic success\n\nTry asking about one of these areas or use the quick options below for more specific help!"
+        }
+    
+    def get_web_options_buttons(self):
+        """Generate quick-click web options"""
+        options = [
+            {'text': '👥 About Us', 'value': 'about_us'},
+            {'text': '🎓 About Application', 'value': 'about_app'},
+            {'text': '📋 How to Use System', 'value': 'how_to_use'},
+            {'text': '📊 Form Filling Guide', 'value': 'input_help'},
+            {'text': '💡 Get Suggestions', 'value': 'get_suggestions'},
+            {'text': '🤖 Model Predictions', 'value': 'model_predictions'},
+            {'text': '📞 Contact Us', 'value': 'contact_us'},
+            {'text': '👋 End Chat', 'value': 'end_chat'}
+        ]
+        return options
+    
+    def get_response(self, message):
+        """Get response for user message - with knowledge base search for ANY academic questions"""
+        message_lower = message.lower().strip()
+        
+        # Handle quick action values
+        if message == 'about_us':
+            content = """
+**👥 About us**
+
+**Developer:** Shaik Sheema Firdose
+
+Computer Science student specializing in AI & ML at RGMCET. Developed this AI Academic Advisor using Deep Neural Networks to provide personalized academic guidance and performance predictions for better student outcomes.
+
+**Our Mission:** To provide personalized, data-driven academic guidance that empowers students to excel in their educational journey.
+"""
+            return f"**👥 About Us**\n\n{content}", self.get_web_options_buttons()
+        elif message == 'about_app':
+            content = self.web_options['about_application']['content']
+            return f"**{self.web_options['about_application']['title']}**\n\n{content}", self.get_web_options_buttons()
+        elif message == 'how_to_use':
+            content = self.web_options['how_to_use']['content']
+            return f"**{self.web_options['how_to_use']['title']}**\n\n{content}", self.get_web_options_buttons()
+        elif message == 'input_help':
+            content = self.web_options['input_guidance']['content']
+            return f"**{self.web_options['input_guidance']['title']}**\n\n{content}", self.get_web_options_buttons()
+        elif message == 'get_suggestions':
+            content = """
+**💡 Get Personalized Suggestions**
+
+After you receive your performance prediction, click the **"GET PERSONALIZED ADVICE"** button to receive:
+
+• **Customized Study Plans** tailored to your specific needs
+• **Targeted Improvement Strategies** based on your weak areas
+• **Time Management Recommendations** for optimal productivity
+• **Career Guidance** aligned with your academic performance
+• **Resource Recommendations** for additional learning materials
+
+**How it works:** Our AI Model analyzes your input data and provides actionable suggestions to help you improve your academic performance and achieve your goals.
+"""
+            return f"**💡 Get Suggestions**\n\n{content}", self.get_web_options_buttons()
+        elif message == 'model_predictions':
+            content = """
+**🤖 About Model Predictions**
+
+Our AI prediction system uses advanced **Deep Neural Networks (DNN)** to analyze your complete academic profile and predict your performance category.
+
+**Important:** Not only CGPA matters! We consider all your inputs together - including attendance, study habits, backlogs, competitions, projects, and confidence level - for comprehensive performance prediction.
+
+**Prediction Categories:**
+• **Excellent** - Outstanding performance with strong academic habits
+• **Good** - Solid performance with room for optimization
+• **Average** - Moderate performance needing strategic improvements
+• **Need Improvement** - Areas requiring immediate attention and support
+
+**How Predictions Work:**
+The DNN model considers multiple factors including CGPA, attendance, study habits, backlogs, and extracurricular activities to provide accurate performance assessments.
+"""
+            return f"**🤖 Model Predictions**\n\n{content}", self.get_web_options_buttons()
+        elif message == 'contact_us':
+            content = """
+**📞 Contact Us**
+
+We're here to help you with any questions or support you may need:
+
+**Developer Contact:**
+• **Name:** Shaik Sheema Firdose
+• **LinkedIn:** https://www.linkedin.com/in/shaik-sheema-firdose/
+• **Email:** [sheemafirdose1311@gmail.com]
+
+**Support Areas:**
+• Technical issues with the application
+• Questions about predictions and suggestions
+• Academic guidance and counseling
+• Feature requests and feedback
+
+Feel free to reach out for any assistance with the AI Academic Advisor system!
+"""
+            return f"**📞 Contact Us**\n\n{content}", self.get_web_options_buttons()
+        elif message == 'end_chat':
+            return self.general_responses['farewell'], []
+        
+        # Greetings
+        if any(word in message_lower for word in ['hello', 'hi', 'hey', 'start']):
+            return self.general_responses['greeting'], self.get_web_options_buttons()
+        
+        # Help request
+        elif any(word in message_lower for word in ['help', 'what can you do', 'features']):
+            return self.general_responses['help'], self.get_web_options_buttons()
+        
+        # About application
+        elif any(word in message_lower for word in ['about', 'application', 'system', 'what is this']):
+            content = self.web_options['about_application']['content']
+            return f"**{self.web_options['about_application']['title']}**\n\n{content}", self.get_web_options_buttons()
+        
+        # How to use
+        elif any(word in message_lower for word in ['how to use', 'how does it work', 'steps', 'guide']):
+            content = self.web_options['how_to_use']['content']
+            return f"**{self.web_options['how_to_use']['title']}**\n\n{content}", self.get_web_options_buttons()
+        
+        # Input guidance
+        elif any(word in message_lower for word in ['how to fill', 'input', 'fields', 'form']):
+            content = self.web_options['input_guidance']['content']
+            return f"**{self.web_options['input_guidance']['title']}**\n\n{content}", self.get_web_options_buttons()
+        
+        # About developer
+        elif any(word in message_lower for word in ['developer', 'created', 'who made', 'about us']):
+            content = self.web_options['about_developer']['content']
+            return f"**{self.web_options['about_developer']['title']}**\n\n{content}", self.get_web_options_buttons()
+        
+        # Farewell
+        elif any(word in message_lower for word in ['bye', 'goodbye', 'exit', 'quit', 'end']):
+            return self.general_responses['farewell'], []
+        
+        # SEARCH KNOWLEDGE BASE FOR ANY OTHER ACADEMIC QUESTIONS
+        knowledge_result = self._search_knowledge_base(message_lower)
+        if knowledge_result:
+            return knowledge_result, self.get_web_options_buttons()
+        
+        # Default response if nothing found
+        return self.general_responses['knowledge_not_found'], self.get_web_options_buttons()
+
+# Initialize the bot
+academic_bot = AcademicAdvisorBot()
+# ==================== ADD THESE NEW CHAT ROUTES ====================
+@app.route('/chat/send_message', methods=['POST'])
+def chat_send_message():
+    """Handle chatbot messages"""
+    try:
+        data = request.json
+        user_message = data.get('message', '').strip()
+        
+        if not user_message:
+            return jsonify({
+                'response': "Please type a message!",
+                'quick_actions': academic_bot.get_web_options_buttons()
+            })
+        
+        # Get response from academic bot
+        bot_response, quick_actions = academic_bot.get_response(user_message)
+        
+        return jsonify({
+            'response': bot_response,
+            'quick_actions': quick_actions,
+            'status': 'success'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'response': "Sorry, I encountered an error. Please try again!",
+            'quick_actions': academic_bot.get_web_options_buttons(),
+            'status': 'error'
+        })
+
+@app.route('/chat/start', methods=['POST'])
+def chat_start():
+    """Start chatbot conversation"""
+    quick_actions = academic_bot.get_web_options_buttons()
     return jsonify({
-        'response': "🎓 Welcome! I see you're interested in academic advice. Please use the 'GET PERSONALIZED ADVICE' button below for customized suggestions based on your performance data."
+        'response': academic_bot.general_responses['greeting'],
+        'quick_actions': quick_actions,
+        'status': 'success'
     })
-
-@app.route('/send_message', methods=['POST'])
-def send_message():
-    """Fallback for chatbot messages"""
-    return jsonify({
-        'response': "I'm focusing on providing personalized academic suggestions through the main interface. Please fill out the form and use the 'GET PERSONALIZED ADVICE' button for detailed recommendations!"
-    })
-
-@app.route('/reset_chat', methods=['POST'])
-def reset_chat():
-    """Fallback for chat reset"""
-    return jsonify({'status': 'success'})
-
 # ==================== CLEAR SESSION ROUTE ====================
 @app.route('/clear_session', methods=['POST'])
 def clear_session():
