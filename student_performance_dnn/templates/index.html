@@ -915,14 +915,31 @@ Get personalized academic suggestions based on your performance
             this.parentElement.style.transform = 'translateY(0)';
         });
     });
+    function startStaticChat() {
+    document.getElementById('chatModal').style.display = 'block';
+    document.getElementById('chatOverlay').style.display = 'block';
+    
+    // Clear previous messages
+    document.getElementById('chatMessages').innerHTML = '';
+    
+    // Start conversation with new bot
+    fetch('/chat/start', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(response => response.json())
+    .then(data => {
+        addChatMessage(data.response, 'advisor');
+        if (data.quick_actions && data.quick_actions.length > 0) {
+            addQuickActions(data.quick_actions);
+        }
+    });
+}
 
     // ========== CRITICAL FIX: IMPROVED CHAT FUNCTIONS ==========
     let currentSessionId = 'session_' + Math.random().toString(36).substr(2, 9);
     
- function startStaticChat() {
-    console.log('Academic Advisor - Coming Soon');
-    alert('🎓 Academic Advisor feature is coming soon! For now, use the "GET PERSONALIZED ADVICE" button for detailed suggestions and help topics.');
-}
+ 
 
 
     function closeChat() {
@@ -930,39 +947,35 @@ Get personalized academic suggestions based on your performance
         document.getElementById('chatOverlay').style.display = 'none';
     }
 
-    function sendChatMessage() {
-        const input = document.getElementById('chatInput');
-        const message = input.value.trim();
-        
-        if (!message) return;
-        
-        if (message.toLowerCase() === 'bye' || message.toLowerCase() === 'goodbye' || message.toLowerCase() === 'exit') {
-            addChatMessage('You: ' + message, 'user');
-            input.value = '';
-            addChatMessage('Goodbye! Feel free to come back anytime for academic advice. Good luck with your studies! 🎓', 'advisor');
-            setTimeout(() => {
-                closeChat();
-            }, 2000);
-            return;
-        }
-        
-        addChatMessage('You: ' + message, 'user');
-        input.value = '';
-        
-        fetch('/send_message', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                session_id: currentSessionId,
-                message: message
-            })
+function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addChatMessage('You: ' + message, 'user');
+    input.value = '';
+    
+    // Get bot response
+    fetch('/chat/send_message', {  // ⬅️ CORRECT ENDPOINT
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            message: message
         })
-        .then(response => response.json())
-        .then(data => {
-            addChatMessage(data.response, 'advisor');
-            setTimeout(addQuickActions, 100);
-        });
-    }
+    })
+    .then(response => response.json())
+    .then(data => {
+        addChatMessage(data.response, 'advisor');
+        if (data.quick_actions && data.quick_actions.length > 0) {
+            addQuickActions(data.quick_actions);  // ⬅️ NEW STYLE!
+        }
+    })
+    .catch(error => {
+        addChatMessage("Sorry, I'm having trouble responding. Please try again!", 'advisor');
+    });
+}
 
     function resetChat() {
         fetch('/reset_chat', {
@@ -1011,129 +1024,98 @@ Get personalized academic suggestions based on your performance
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    function addQuickActions() {
-        const messagesDiv = document.getElementById('chatMessages');
-        const existingActions = messagesDiv.querySelector('.quick-actions');
-        if (existingActions) {
-            existingActions.remove();
+    function addQuickActions(actions) {
+    const messagesDiv = document.getElementById('chatMessages');
+    const existingActions = messagesDiv.querySelector('.quick-actions');
+    if (existingActions) {
+        existingActions.remove();
+    }
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'quick-actions';
+    actionsDiv.style.margin = '15px 0';
+    actionsDiv.style.textAlign = 'center';
+    actionsDiv.style.padding = '15px';
+    actionsDiv.style.background = '#f8f9fa';
+    actionsDiv.style.borderRadius = '10px';
+    actionsDiv.style.border = '1px solid #e9ecef';
+    
+    const title = document.createElement('div');
+    title.textContent = '💡 Quick Options - Click Any:';
+    title.style.fontWeight = 'bold';
+    title.style.marginBottom = '10px';
+    title.style.color = '#4361ee';
+    actionsDiv.appendChild(title);
+    
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.style.display = 'grid';
+    buttonsContainer.style.gridTemplateColumns = 'repeat(2, 1fr)';
+    buttonsContainer.style.gap = '8px';
+    
+    actions.forEach(action => {
+        const btn = document.createElement('button');
+        btn.textContent = action.text;
+        btn.style.background = 'white';
+        btn.style.border = '2px solid #4361ee';
+        btn.style.borderRadius = '15px';
+        btn.style.padding = '10px 8px';
+        btn.style.fontSize = '11px';
+        btn.style.cursor = 'pointer';
+        btn.style.transition = 'all 0.3s ease';
+        btn.style.fontWeight = '500';
+        btn.style.color = '#4361ee';
+        btn.style.height = '100%';
+        btn.style.minHeight = '50px';
+        
+        // Special styling for End Chat button
+        if (action.text.includes('End Chat')) {
+            btn.style.background = '#6c757d';
+            btn.style.color = 'white';
+            btn.style.border = '2px solid #495057';
+            btn.style.fontWeight = '600';
         }
         
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'quick-actions';
-        actionsDiv.style.margin = '15px 0';
-        actionsDiv.style.textAlign = 'center';
-        actionsDiv.style.padding = '15px';
-        actionsDiv.style.background = '#f8f9fa';
-        actionsDiv.style.borderRadius = '10px';
-        actionsDiv.style.border = '1px solid #e9ecef';
-        
-        const title = document.createElement('div');
-        title.textContent = '💡 Quick Help Options - Click Any:';
-        title.style.fontWeight = 'bold';
-        title.style.marginBottom = '10px';
-        title.style.color = '#4361ee';
-        actionsDiv.appendChild(title);
-        
-        const quickTopics = [
-            {'text': '📋 Get My Summary', 'query': 'summary'},
-            {'text': '📊 Academic Analysis', 'query': 'academic performance analysis'},
-            {'text': '🎯 Study Techniques', 'query': 'study techniques time management'},
-            {'text': '📖 Exam Preparation', 'query': 'exam preparation strategies'},
-            {'text': '💼 Career Guidance', 'query': 'career guidance placements'},
-            {'text': '😌 Mental Health', 'query': 'mental health motivation'},
-            {'text': '🌿 Campus Life', 'query': 'campus life balance'},
-            {'text': '👋 End Chat', 'query': 'bye', 'isBye': true}
-        ];
-        
-        const buttonsContainer = document.createElement('div');
-        buttonsContainer.style.display = 'flex';
-        buttonsContainer.style.flexWrap = 'wrap';
-        buttonsContainer.style.justifyContent = 'center';
-        buttonsContainer.style.gap = '8px';
-        
-        quickTopics.forEach(topic => {
-            const btn = document.createElement('button');
-            btn.textContent = topic.text;
-            btn.style.background = 'white';
-            btn.style.border = '2px solid #4361ee';
-            btn.style.borderRadius = '20px';
-            btn.style.padding = '10px 15px';
-            btn.style.fontSize = '12px';
-            btn.style.cursor = 'pointer';
-            btn.style.transition = 'all 0.3s ease';
-            btn.style.fontWeight = '500';
-            btn.style.color = '#4361ee';
-            btn.style.flex = '1';
-            btn.style.minWidth = '140px';
-            btn.style.maxWidth = '180px';
-            
-            if (topic.text.includes('Summary')) {
+        btn.onmouseover = () => {
+            if (action.text.includes('End Chat')) {
+                btn.style.background = '#495057';
+                btn.style.color = 'white';
+            } else {
                 btn.style.background = '#4361ee';
                 btn.style.color = 'white';
-                btn.style.border = '2px solid #3a56d4';
-                btn.style.fontWeight = '600';
             }
-            
-            if (topic.isBye) {
+            btn.style.transform = 'translateY(-2px)';
+            btn.style.boxShadow = '0 4px 8px rgba(67, 97, 238, 0.3)';
+        };
+        
+        btn.onmouseout = () => {
+            if (action.text.includes('End Chat')) {
                 btn.style.background = '#6c757d';
                 btn.style.color = 'white';
-                btn.style.border = '2px solid #495057';
-                btn.style.fontWeight = '600';
+            } else {
+                btn.style.background = 'white';
+                btn.style.color = '#4361ee';
             }
-            
-            btn.onmouseover = () => {
-                if (topic.isBye) {
-                    btn.style.background = '#495057';
-                    btn.style.color = 'white';
-                } else {
-                    btn.style.background = '#4361ee';
-                    btn.style.color = 'white';
-                }
-                btn.style.transform = 'translateY(-2px)';
-                btn.style.boxShadow = '0 4px 8px rgba(67, 97, 238, 0.3)';
-            };
-            btn.onmouseout = () => {
-                if (topic.text.includes('Summary')) {
-                    btn.style.background = '#4361ee';
-                    btn.style.color = 'white';
-                } else if (topic.isBye) {
-                    btn.style.background = '#6c757d';
-                    btn.style.color = 'white';
-                } else {
-                    btn.style.background = 'white';
-                    btn.style.color = '#4361ee';
-                }
-                btn.style.transform = 'translateY(0)';
-                btn.style.boxShadow = 'none';
-            };
-            
-            btn.onclick = () => {
-                if (topic.isBye) {
-                    document.getElementById('chatInput').value = 'bye';
-                    sendChatMessage();
-                } else {
-                    document.getElementById('chatInput').value = topic.query;
-                    sendChatMessage();
-                }
-            };
-            
-            buttonsContainer.appendChild(btn);
-        });
+            btn.style.transform = 'translateY(0)';
+            btn.style.boxShadow = 'none';
+        };
         
-        actionsDiv.appendChild(buttonsContainer);
+        btn.onclick = () => {
+            if (action.value === 'end_chat') {
+                document.getElementById('chatInput').value = 'bye';
+                sendChatMessage();
+            } else {
+                document.getElementById('chatInput').value = action.value;
+                sendChatMessage();
+            }
+        };
         
-        const note = document.createElement('div');
-        note.textContent = '📋 Summary shows your academic profile with personalized insights • 👋 Click "End Chat" to close';
-        note.style.marginTop = '10px';
-        note.style.fontSize = '11px';
-        note.style.color = '#6c757d';
-        note.style.fontStyle = 'italic';
-        note.style.textAlign = 'center';
-        actionsDiv.appendChild(note);
-        
-        messagesDiv.appendChild(actionsDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+        buttonsContainer.appendChild(btn);
+    });
+    
+    actionsDiv.appendChild(buttonsContainer);
+    messagesDiv.appendChild(actionsDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
     document.getElementById('chatOverlay').addEventListener('click', closeChat);
     document.getElementById('chatInput').addEventListener('keypress', function(e) {
