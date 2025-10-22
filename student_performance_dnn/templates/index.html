@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Performance Predictor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <!-- ADD THIS LINE IN HEAD SECTION -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* ALL YOUR EXISTING CSS STAYS EXACTLY THE SAME - NO CHANGES */
@@ -669,7 +671,7 @@
                 </form>
                 
                 <div class="footer">
-                    <p>© 2023 Student Performance Prediction System | Powered by Deep Neural Networks</p>
+                    <p>© 2025 Student Performance Prediction System | Powered by Deep Neural Networks</p>
                 </div>
             </div>
         </div>
@@ -730,6 +732,56 @@
 <!-- Animated gradient overlay -->
 <span style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.8s;"></span>
 </button>
+    <!-- REPORT BUTTONS - NEXT LINE, BOTH IN ONE LINE -->
+<div style="display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 15px;">
+    <button onclick="viewReport()" 
+            style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+                   color: white; 
+                   border: none; 
+                   padding: 16px 30px; 
+                   border-radius: 25px; 
+                   cursor: pointer;
+                   font-size: 16px;
+                   font-weight: 700;
+                   box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+                   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                   position: relative;
+                   overflow: hidden;
+                   display: flex;
+                   align-items: center;
+                   gap: 10px;
+                   letter-spacing: 0.5px;"
+            onmouseover="this.style.transform='translateY(-5px) scale(1.05)'; this.style.boxShadow='0 12px 25px rgba(40, 167, 69, 0.6)'; this.style.background='linear-gradient(135deg, #218838 0%, #1ea085 100%)';"
+            onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(40, 167, 69, 0.4)'; this.style.background='linear-gradient(135deg, #28a745 0%, #20c997 100%)';">
+        <i class="fas fa-file-alt" style="font-size: 18px;"></i> 
+        <span>VIEW REPORT</span>
+        <span style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.8s;"></span>
+    </button>
+    
+    <button onclick="downloadReport()" 
+            style="background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%); 
+                   color: white; 
+                   border: none; 
+                   padding: 16px 30px; 
+                   border-radius: 25px; 
+                   cursor: pointer;
+                   font-size: 16px;
+                   font-weight: 700;
+                   box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+                   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                   position: relative;
+                   overflow: hidden;
+                   display: flex;
+                   align-items: center;
+                   gap: 10px;
+                   letter-spacing: 0.5px;"
+            onmouseover="this.style.transform='translateY(-5px) scale(1.05)'; this.style.boxShadow='0 12px 25px rgba(220, 53, 69, 0.6)'; this.style.background='linear-gradient(135deg, #c82333 0%, #d91a6c 100%)';"
+            onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(220, 53, 69, 0.4)'; this.style.background='linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)';">
+        <i class="fas fa-download" style="font-size: 18px;"></i> 
+        <span>DOWNLOAD REPORT</span>
+        <span style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.8s;"></span>
+    </button>
+</div>
     <p style="margin-top: 12px; color: #6c757d; font-size: 14px; font-weight: 500;">
 Get personalized academic suggestions based on your performance
 </p>
