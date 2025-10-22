@@ -1809,6 +1809,635 @@ function formatProfessionalSuggestions(suggestions, studentData) {
     
     return contextualMsg + formatted;
 }
+    
+// ========== REPORT TEMPLATE SYSTEM ==========
+function viewReport() {
+    const formData = JSON.parse(sessionStorage.getItem('studentFormData') || '{}');
+    const prediction = '{{ prediction_text }}'.replace('Predicted Performance: ', '') || 'Good';
+    
+    // Generate report content using template
+    const reportContent = generateReportTemplate(formData, prediction);
+    
+    // Show in modal
+    showReportModal(reportContent);
+}
+
+function downloadReport() {
+    const formData = JSON.parse(sessionStorage.getItem('studentFormData') || '{}');
+    const prediction = '{{ prediction_text }}'.replace('Predicted Performance: ', '') || 'Good';
+    
+    // Generate report content
+    const reportContent = generateReportTemplate(formData, prediction);
+    
+    // Convert to PDF and download
+    generatePDF(reportContent, `Student_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+}
+
+// REPORT TEMPLATE - FIXED STRUCTURE WITH DYNAMIC DATA
+function generateReportTemplate(studentData, prediction) {
+    const currentDate = new Date().toLocaleDateString();
+    const confidence = '{{ confidence_score }}' || '85';
+    
+    // This is the TEMPLATE - fixed structure
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+        <!-- HEADER - FIXED -->
+        <div style="text-align: center; border-bottom: 3px solid #4361ee; padding-bottom: 20px; margin-bottom: 30px;">
+            <h1 style="color: #4361ee; margin: 0;">🎓 ACADEMIC PERFORMANCE REPORT</h1>
+            <p style="color: #666; font-size: 16px;">Generated on: ${currentDate}</p>
+        </div>
+
+        <!-- STUDENT PROFILE SECTION - FIXED HEADING -->
+        <div style="margin-bottom: 30px;">
+            <h2 style="color: #4361ee; border-left: 4px solid #4361ee; padding-left: 10px;">📊 STUDENT PROFILE</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold; width: 40%;">Total CGPA:</td>
+                        <td style="padding: 8px;">${studentData.total_cgpa || 'N/A'}/10</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Attendance:</td>
+                        <td style="padding: 8px;">${studentData.attendance || 'N/A'}%</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Weekly Study Hours:</td>
+                        <td style="padding: 8px;">${studentData.study_hours || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Backlogs:</td>
+                        <td style="padding: 8px;">${studentData.backlogs || '0'}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Projects/Internships:</td>
+                        <td style="padding: 8px;">${studentData.projects_internships || 'No'}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Competitions:</td>
+                        <td style="padding: 8px;">${studentData.competitions || 'No'}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE ANALYSIS SECTION - FIXED HEADING -->
+        <div style="margin-bottom: 30px;">
+            <h2 style="color: #28a745; border-left: 4px solid #28a745; padding-left: 10px;">📈 PERFORMANCE ANALYSIS</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <div style="margin-bottom: 15px;">
+                    <strong>Predicted Performance Level:</strong> 
+                    <span style="color: ${
+                        prediction.includes('Excellent') ? '#28a745' : 
+                        prediction.includes('Good') ? '#ffc107' : 
+                        prediction.includes('Average') ? '#fd7e14' : '#dc3545'
+                    }; font-weight: bold;">${prediction}</span>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong>Confidence Score:</strong> ${confidence}%
+                </div>
+                <div>
+                    <strong>Key Insights:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        ${generatePerformanceInsights(studentData, prediction)}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION PLAN SECTION - FIXED HEADING -->
+        <div style="margin-bottom: 30px;">
+            <h2 style="color: #dc3545; border-left: 4px solid #dc3545; padding-left: 10px;">🎯 PERSONALIZED ACTION PLAN</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                ${generateActionPlan(studentData, prediction)}
+            </div>
+        </div>
+
+        <!-- FOOTER - FIXED -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #dee2e6; color: #666;">
+            <p><strong>AI Student Performance Advisor</strong></p>
+            <p>Generated by Smart Academic Analysis System</p>
+        </div>
+    </div>
+    `;
+}
+
+// Helper functions to generate dynamic content
+function generatePerformanceInsights(studentData, prediction) {
+    let insights = [];
+    
+    if (studentData.total_cgpa >= 8.5) {
+        insights.push('<li>Excellent academic performance with strong CGPA foundation</li>');
+    } else if (studentData.total_cgpa >= 7.0) {
+        insights.push('<li>Good academic foundation with room for growth</li>');
+    } else {
+        insights.push('<li>Focus needed on academic performance improvement</li>');
+    }
+    
+    if (studentData.attendance >= 85) {
+        insights.push('<li>Strong attendance record supporting learning</li>');
+    } else {
+        insights.push('<li>Attendance improvement needed for better outcomes</li>');
+    }
+    
+    if (studentData.study_hours && studentData.study_hours.includes('0-10')) {
+        insights.push('<li>Study hours below optimal level for academic success</li>');
+    }
+    
+    if (studentData.backlogs && studentData.backlogs !== '0') {
+        insights.push(`<li>${studentData.backlogs} backlog(s) affecting academic progress</li>`);
+    }
+    
+    return insights.join('');
+}
+
+function generateActionPlan(studentData, prediction) {
+    let actions = [];
+    
+    // Study hours recommendation
+    if (studentData.study_hours && studentData.study_hours.includes('0-10')) {
+        actions.push('<div style="margin: 10px 0; padding: 10px; background: white; border-radius: 5px; border-left: 4px solid #4361ee;">');
+        actions.push('<strong>📚 Study Routine:</strong> Increase study hours to 20-25 hours per week for better academic performance');
+        actions.push('</div>');
+    }
+    
+    // Backlog clearance
+    if (studentData.backlogs && studentData.backlogs !== '0') {
+        actions.push('<div style="margin: 10px 0; padding: 10px; background: white; border-radius: 5px; border-left: 4px solid #dc3545;">');
+        actions.push(`<strong>🎯 Priority Action:</strong> Clear ${studentData.backlogs} backlog(s) within next semester`);
+        actions.push('</div>');
+    }
+    
+    // Project work
+    if (studentData.projects_internships === 'No') {
+        actions.push('<div style="margin: 10px 0; padding: 10px; background: white; border-radius: 5px; border-left: 4px solid #28a745;">');
+        actions.push('<strong>💼 Skill Development:</strong> Start working on 1-2 projects to build practical experience');
+        actions.push('</div>');
+    }
+    
+    // General advice based on prediction
+    if (prediction.includes('Excellent')) {
+        actions.push('<div style="margin: 10px 0; padding: 10px; background: white; border-radius: 5px; border-left: 4px solid #ffc107;">');
+        actions.push('<strong>🌟 Maintenance Strategy:</strong> Continue current study habits and explore advanced topics');
+        actions.push('</div>');
+    } else {
+        actions.push('<div style="margin: 10px 0; padding: 10px; background: white; border-radius: 5px; border-left: 4px solid #fd7e14;">');
+        actions.push('<strong>🚀 Improvement Focus:</strong> Implement structured study schedule and regular revisions');
+        actions.push('</div>');
+    }
+    
+    return actions.join('');
+}
+// ========== FIXED REPORT FUNCTIONS ==========
+// ========== ADD THIS MISSING FUNCTION ==========
+function showReportModal(content) {
+    const overlay = document.createElement('div');
+    overlay.id = 'reportOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '1001';
+    
+    const modal = document.createElement('div');
+    modal.id = 'reportModal';
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.width = '90%';
+    modal.style.maxWidth = '900px';
+    modal.style.maxHeight = '80vh';
+    modal.style.background = 'white';
+    modal.style.borderRadius = '15px';
+    modal.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    modal.style.zIndex = '1002';
+    modal.style.overflow = 'hidden';
+    
+    modal.innerHTML = `
+        <div style="background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">📋 Academic Performance Report</h3>
+            <button onclick="closeReportModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px;">×</button>
+        </div>
+        <div style="padding: 0; max-height: 60vh; overflow-y: auto;">
+            ${content}
+        </div>
+        <div style="padding: 20px; background: #f8f9fa; text-align: center; border-top: 1px solid #dee2e6;">
+            <button onclick="downloadReport()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; margin: 0 10px;">
+                📥 Download as PDF
+            </button>
+            <button onclick="closeReportModal()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; margin: 0 10px;">
+                Close
+            </button>
+        </div>
+    `;
+    
+    // Close function
+    window.closeReportModal = function() {
+        document.body.removeChild(modal);
+        document.body.removeChild(overlay);
+    };
+    
+    // Close when clicking overlay
+    overlay.onclick = window.closeReportModal;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
+}
+function viewReport() {
+    askForStudentName('view');
+}
+
+function downloadReport() {
+    askForStudentName('download');
+}
+
+function askForStudentName(action) {
+    // Create name input modal
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.zIndex = '1001';
+    
+    const nameModal = document.createElement('div');
+    nameModal.style.position = 'fixed';
+    nameModal.style.top = '50%';
+    nameModal.style.left = '50%';
+    nameModal.style.transform = 'translate(-50%, -50%)';
+    nameModal.style.width = '90%';
+    nameModal.style.maxWidth = '400px';
+    nameModal.style.background = 'white';
+    nameModal.style.borderRadius = '15px';
+    nameModal.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    nameModal.style.zIndex = '1002';
+    nameModal.style.padding = '0';
+    nameModal.style.overflow = 'hidden';
+    
+    nameModal.innerHTML = `
+        <div style="background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; padding: 20px; text-align: center;">
+            <h3 style="margin: 0; font-size: 1.2rem;">📝 Enter Your Name</h3>
+        </div>
+        <div style="padding: 25px;">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Student Name:</label>
+                <input type="text" id="studentNameInput" placeholder="Enter your full name" 
+                       style="width: 100%; padding: 12px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 16px;"
+                       onkeypress="if(event.key === 'Enter') proceedWithReport('${action}')">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="proceedWithReport('${action}')" 
+                        style="background: #4361ee; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    Continue
+                </button>
+                <button onclick="closeNameModal()" 
+                        style="background: #6c757d; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Store references for cleanup
+    window.currentNameModal = nameModal;
+    window.currentNameOverlay = overlay;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(nameModal);
+    
+    // Focus on input
+    setTimeout(() => {
+        document.getElementById('studentNameInput').focus();
+    }, 100);
+}
+
+function closeNameModal() {
+    if (window.currentNameModal && window.currentNameOverlay) {
+        document.body.removeChild(window.currentNameModal);
+        document.body.removeChild(window.currentNameOverlay);
+    }
+}
+
+function proceedWithReport(action) {
+    const studentName = document.getElementById('studentNameInput').value.trim();
+    
+    if (!studentName) {
+        alert('Please enter your name to generate the report.');
+        return;
+    }
+    
+    // Close name modal immediately
+    closeNameModal();
+    
+    const formData = JSON.parse(sessionStorage.getItem('studentFormData') || '{}');
+    const prediction = '{{ prediction_text }}'.replace('Predicted Performance: ', '') || 'Good';
+    
+    // Generate report content with student name
+    const reportContent = generateReportTemplate(formData, prediction, studentName);
+    
+    if (action === 'view') {
+        showReportModal(reportContent);
+    } else {
+        generatePDF(reportContent, `Student_Report_${studentName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
+}
+
+
+
+// ========== UPDATED REPORT TEMPLATE WITH STUDENT NAME ==========
+// ========== UPDATED REPORT TEMPLATE WITH STUDENT NAME ==========
+function generateReportTemplate(studentData, prediction, studentName) {
+    const currentDate = new Date().toLocaleDateString();
+    const confidence = '{{ confidence_score }}' || '85';
+    
+    // THIS IS YOUR EXISTING TEMPLATE - JUST ADDED STUDENT NAME
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+        <!-- HEADER - FIXED -->
+        <div style="text-align: center; border-bottom: 3px solid #4361ee; padding-bottom: 20px; margin-bottom: 30px;">
+            <h1 style="color: #4361ee; margin: 0;">🎓 ACADEMIC PERFORMANCE REPORT</h1>
+            
+            <p style="color: #666; font-size: 16px;">Generated on: ${currentDate}</p>
+        </div>
+
+        <!-- STUDENT PROFILE SECTION - FIXED HEADING -->
+        <div style="margin-bottom: 30px;">
+            <h2 style="color: #4361ee; border-left: 4px solid #4361ee; padding-left: 10px;">📊 STUDENT PROFILE</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <table style="width: 100%;">
+                <tr>
+                        <td style="padding: 8px; font-weight: bold; width: 40%;">Student Name:</td>
+                        <td style="padding: 8px;">${studentName}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold; width: 40%;">Total CGPA:</td>
+                        <td style="padding: 8px;">${studentData.total_cgpa || 'N/A'}/10</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Attendance:</td>
+                        <td style="padding: 8px;">${studentData.attendance || 'N/A'}%</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Weekly Study Hours:</td>
+                        <td style="padding: 8px;">${studentData.study_hours || 'N/A'}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Backlogs:</td>
+                        <td style="padding: 8px;">${studentData.backlogs || '0'}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Projects/Internships:</td>
+                        <td style="padding: 8px;">${studentData.projects_internships || 'No'}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold;">Competitions:</td>
+                        <td style="padding: 8px;">${studentData.competitions || 'No'}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE ANALYSIS SECTION - FIXED HEADING -->
+        <div style="margin-bottom: 30px;">
+            <h2 style="color: #28a745; border-left: 4px solid #28a745; padding-left: 10px;">📈 PERFORMANCE ANALYSIS</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <div style="margin-bottom: 15px;">
+                    <strong>Predicted Performance Level:</strong> 
+                    <span style="color: ${
+                        prediction.includes('Excellent') ? '#28a745' : 
+                        prediction.includes('Good') ? '#ffc107' : 
+                        prediction.includes('Average') ? '#fd7e14' : '#dc3545'
+                    }; font-weight: bold;">${prediction}</span>
+                </div>
+                
+                <div>
+                    <strong>Key Insights:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        ${generatePerformanceInsights(studentData, prediction)}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION PLAN SECTION - FIXED HEADING -->
+        <div style="margin-bottom: 30px;">
+            <h2 style="color: #dc3545; border-left: 4px solid #dc3545; padding-left: 10px;">🎯 PERSONALIZED ACTION PLAN</h2>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                ${generateActionPlan(studentData, prediction)}
+            </div>
+        </div>
+
+        <!-- FOOTER - FIXED -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #dee2e6; color: #666;">
+            <p><strong>AI Student Performance Advisor</strong></p>
+            <p>Generated by Smart Academic Analysis System</p>
+        </div>
+    </div>
+    `;
+}
+
+// ========== HELPER FUNCTIONS FOR REPORT ==========
+function generateProfileCards(studentData) {
+    const cards = [
+        { icon: '📊', label: 'CGPA', value: `${studentData.total_cgpa || 'N/A'}/10`, color: '#4361ee' },
+        { icon: '⏰', label: 'Attendance', value: `${studentData.attendance || 'N/A'}%`, color: '#28a745' },
+        { icon: '📚', label: 'Study Hours', value: studentData.study_hours || 'N/A', color: '#ff6b00' },
+        { icon: '⚠️', label: 'Backlogs', value: studentData.backlogs || '0', color: '#dc3545' },
+        { icon: '💼', label: 'Projects', value: studentData.projects_internships || 'No', color: '#6f42c1' },
+        { icon: '🏆', label: 'Competitions', value: studentData.competitions || 'No', color: '#20c997' },
+        { icon: '🧠', label: 'Confidence', value: `${studentData.confidence_level || 'N/A'}/10`, color: '#e83e8c' },
+        { icon: '📈', label: 'Previous CGPA', value: `${studentData.prevsem_cgpa || 'N/A'}/10`, color: '#fd7e14' }
+    ];
+    
+    return cards.map(card => `
+        <div style="
+            background: ${card.color}10;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid ${card.color};
+            text-align: center;
+        ">
+            <div style="font-size: 18px; margin-bottom: 5px;">${card.icon}</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 3px;">${card.label}</div>
+            <div style="font-size: 16px; font-weight: 700; color: ${card.color};">${card.value}</div>
+        </div>
+    `).join('');
+}
+
+function generateStrengths(studentData, prediction) {
+    let strengths = [];
+    
+    if (parseFloat(studentData.total_cgpa) >= 8.0) {
+        strengths.push('<li>Strong academic performance with excellent CGPA</li>');
+    }
+    if (parseInt(studentData.attendance) >= 85) {
+        strengths.push('<li>Consistent class attendance and discipline</li>');
+    }
+    if (studentData.study_hours && (studentData.study_hours.includes('21-30') || studentData.study_hours.includes('31+'))) {
+        strengths.push('<li>Dedicated study routine and time management</li>');
+    }
+    if (studentData.projects_internships !== 'No') {
+        strengths.push('<li>Practical experience through projects/internships</li>');
+    }
+    if (studentData.competitions !== 'No') {
+        strengths.push('<li>Active participation in academic competitions</li>');
+    }
+    if (parseInt(studentData.confidence_level) >= 7) {
+        strengths.push('<li>High self-confidence in academic abilities</li>');
+    }
+    
+    if (strengths.length === 0) {
+        strengths.push('<li>Strong foundation for academic growth</li>');
+    }
+    
+    return strengths.join('');
+}
+
+function generateImprovements(studentData, prediction) {
+    let improvements = [];
+    
+    if (parseFloat(studentData.total_cgpa) < 7.0) {
+        improvements.push('<li>Focus on improving overall CGPA</li>');
+    }
+    if (parseInt(studentData.attendance) < 80) {
+        improvements.push('<li>Increase class attendance for better learning</li>');
+    }
+    if (studentData.study_hours && studentData.study_hours.includes('0-10')) {
+        improvements.push('<li>Significantly increase weekly study hours</li>');
+    }
+    if (studentData.backlogs && studentData.backlogs !== '0') {
+        improvements.push(`<li>Clear ${studentData.backlogs} backlog(s) as priority</li>`);
+    }
+    if (studentData.projects_internships === 'No') {
+        improvements.push('<li>Start working on practical projects</li>');
+    }
+    if (studentData.competitions === 'No') {
+        improvements.push('<li>Participate in academic competitions</li>');
+    }
+    
+    if (improvements.length === 0) {
+        improvements.push('<li>Maintain current performance standards</li>');
+    }
+    
+    return improvements.join('');
+}
+
+function generateActionCards(studentData, prediction) {
+    let actions = [];
+    
+    // Study hours action
+    if (studentData.study_hours && studentData.study_hours.includes('0-10')) {
+        actions.push(`
+            <div style="display: flex; align-items: center; background: #fff3e0; padding: 12px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                <span style="font-size: 20px; margin-right: 10px;">⏰</span>
+                <div>
+                    <strong>Increase Study Hours:</strong> Aim for 20-25 hours weekly for better academic performance
+                </div>
+            </div>
+        `);
+    }
+    
+    // Backlog action
+    if (studentData.backlogs && studentData.backlogs !== '0') {
+        actions.push(`
+            <div style="display: flex; align-items: center; background: #ffebee; padding: 12px; border-radius: 8px; border-left: 4px solid #f44336;">
+                <span style="font-size: 20px; margin-right: 10px;">🎯</span>
+                <div>
+                    <strong>Clear Backlogs:</strong> Priority action to clear ${studentData.backlogs} backlog(s) this semester
+                </div>
+            </div>
+        `);
+    }
+    
+    // Project action
+    if (studentData.projects_internships === 'No') {
+        actions.push(`
+            <div style="display: flex; align-items: center; background: #e8f5e8; padding: 12px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                <span style="font-size: 20px; margin-right: 10px;">💼</span>
+                <div>
+                    <strong>Build Projects:</strong> Start with 1-2 mini-projects to enhance practical skills
+                </div>
+            </div>
+        `);
+    }
+    
+    // General improvement actions based on prediction
+    if (prediction.includes('Average') || prediction.includes('Below Average')) {
+        actions.push(`
+            <div style="display: flex; align-items: center; background: #e3f2fd; padding: 12px; border-radius: 8px; border-left: 4px solid #2196f3;">
+                <span style="font-size: 20px; margin-right: 10px;">📚</span>
+                <div>
+                    <strong>Structured Study Plan:</strong> Create daily study schedule with focus on weak subjects
+                </div>
+            </div>
+        `);
+    }
+    
+    // Confidence building
+    if (parseInt(studentData.confidence_level) < 6) {
+        actions.push(`
+            <div style="display: flex; align-items: center; background: #f3e5f5; padding: 12px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                <span style="font-size: 20px; margin-right: 10px;">🧠</span>
+                <div>
+                    <strong>Build Confidence:</strong> Practice mock tests and focus on small achievements
+                </div>
+            </div>
+        `);
+    }
+    
+    if (actions.length === 0) {
+        actions.push(`
+            <div style="display: flex; align-items: center; background: #e8f5e8; padding: 12px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                <span style="font-size: 20px; margin-right: 10px;">🌟</span>
+                <div>
+                    <strong>Maintain Excellence:</strong> Continue current study habits and explore advanced topics
+                </div>
+            </div>
+        `);
+    }
+    
+    return actions.join('');
+}
+
+// ========== FIXED PDF GENERATION ==========
+// ========== IMPROVED PDF GENERATION ==========
+function generatePDF(content, filename) {
+    const element = document.createElement('div');
+    element.innerHTML = content;
+    
+    const opt = {
+        margin: [10, 10, 10, 10],
+        filename: filename,
+        image: { 
+            type: 'jpeg', 
+            quality: 0.98 
+        },
+        html2canvas: { 
+            scale: 3, // Higher scale for better quality
+            useCORS: true,
+            logging: false,
+            letterRendering: true
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait',
+            compress: true
+        },
+        pagebreak: { 
+            mode: ['avoid-all', 'css', 'legacy'] 
+        }
+    };
+    
+    // Use html2pdf library with better settings
+    html2pdf().set(opt).from(element).save().then(() => {
+        console.log('Professional PDF generated successfully');
+    });
+}
 
 // Save form data before submission to use in suggestions
 document.getElementById('prediction-form').addEventListener('submit', function(e) {
