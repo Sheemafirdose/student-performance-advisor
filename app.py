@@ -1343,6 +1343,14 @@ def scaler_info():
         """
     except Exception as e:
         return f"Error: {e}"
+@app.route('/generate_pdf_report', methods=['POST'])
+def generate_pdf_report():
+    try:
+        student_data = session.get('student_data')
+        # Your PDF generation logic here
+        return jsonify({'success': True, 'message': 'PDF generated'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
 
 # Health check route for Render
 @app.route('/health')
