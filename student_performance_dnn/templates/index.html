@@ -1835,7 +1835,7 @@ function downloadReport() {
 
 // REPORT TEMPLATE - FIXED STRUCTURE WITH DYNAMIC DATA
 function generateReportTemplate(studentData, prediction) {
-    const currentDate = new Date().toLocaleDateString();
+    const currentDate = new Date().toLocaleDateString('en-GB');
     const confidence = '{{ confidence_score }}' || '85';
     
     // This is the TEMPLATE - fixed structure
